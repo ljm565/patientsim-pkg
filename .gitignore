@@ -19,6 +19,7 @@ __pycache__/
 logs/
 junk/
 json*/
+dist/
 
 # Data and configuration folders
 data/

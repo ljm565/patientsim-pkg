@@ -150,9 +150,9 @@ def get_reminder_description(personality: str,
     """
 
     description_list = [
-        f"You should act like {LANG_PROFICIENCY_LEVEL[lang_proficiency_level]["description"].lower()}",
-        f"You are {PERSONALITY[personality]["description"].lower()}",
-        f"Also, you {RECALL_LEVEL[recall_level]["description"].lower()}",
-        CONFUSION_LEVEL[confusion_level]["description"]
+        f"You should act like {LANG_PROFICIENCY_LEVEL[lang_proficiency_level]['description'].lower()}",
+        f"You are {PERSONALITY[personality]['description'].lower()}",
+        f"Also, you {RECALL_LEVEL[recall_level]['description'].lower()}",
+        CONFUSION_LEVEL[confusion_level]['description']
     ]
     return " ".join(description_list)
