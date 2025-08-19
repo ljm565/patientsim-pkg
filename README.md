@@ -54,13 +54,41 @@ print(patientsim.__version__)
 # export OPENAI_API_KEY="YOUR_KEY"  (Linux/Mac)
 # setx OPENAI_API_KEY "YOUR_KEY"     (Windows)
 
-# Patient Agent
+# Patient Agent (gpt + azure)
 patient_agent = PatientAgent('gpt-4o', 
                               visit_type='emergency_department',
                               random_seed=42,
                               random_sampling=False,
                               temperature=0,
-                              api_key=OPENAI_API_KEY)
+                              api_key=OPENAI_API_KEY,
+                              use_azure=True,
+                              azure_endpoint=AZURE_ENDPOINT)
+
+response = patient_agent(
+    user_prompt="How can I help you?",
+)
+
+print(response)
+
+# Patient Agent (gemini + vertex)
+# Before use vertex ai
+# 1) Select or create a Google Cloud project in the Google Cloud Console.
+# 2) Enable the Vertex AI API.
+# 3) Create a service account:
+#       1. Go to IAM & Admin > Service Accounts
+#       2. Click Create service account
+#       3. Assign the Vertex AI Platform Express User role
+# 4) Generate a key in JSON format and set the path to the JSON file as the GOOGLE_APPLICATION_CREDENTIALS environment variable.
+
+patient_agent = PatientAgent('gemini-2.5-flash', 
+                              visit_type='emergency_department',
+                              random_seed=42,
+                              random_sampling=False,
+                              temperature=0,
+                              use_vertex=True,
+                              genai_project_id=GOOGLE_PROJECT_ID,
+                              genai_project_location=GOOGLE_PROJECT_LOCATION,
+                              genai_credential_path=GOOGLE_APPLICATION_CREDENTIALS)
 
 response = patient_agent(
     user_prompt="How can I help you?",
