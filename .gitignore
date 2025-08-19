@@ -1,0 +1,29 @@
+# Python cache
+__pycache__/
+*.pyc
+
+# Temporary, env, or junk files
+.junk/
+.DS_Store
+.out
+.whl
+.env
+
+# Shell scripts
+*.sh
+
+# CSV files
+*.csv
+
+# Logs and unnecessary folders
+logs/
+junk/
+json*/
+
+# Data and configuration folders
+data/
+config/
+.vscode/launch.json
+output/*
+fhir_data/*
+synthetic_data*/*

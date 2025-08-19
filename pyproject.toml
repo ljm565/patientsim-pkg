@@ -1,0 +1,28 @@
+[tool.poetry]
+name = "patientsim"
+version = "0.1.0"
+description = ""
+authors = ["Jun-Min Lee <ljm56897@gmail.com>"]
+readme = "README.md"
+packages = [
+    { include = "patientsim", from = "src" }
+]
+include = [
+    { path = "src/patientsim/assets/prompt/*.txt", format = "sdist" },
+    { path = "src/patientsim/assets/prompt/*.txt", format = "wheel" },
+    { path = "src/patientsim/assets/*.json", format = "sdist" },
+    { path = "src/patientsim/assets/*.json", format = "wheel" }
+]
+
+[tool.poetry.dependencies]
+python = ">=3.11,<3.13"
+tqdm = "4.65.0"
+dotenv = "0.9.9"
+google-genai = "1.19.0"
+openai = ">=1.87.0,<=1.90.0"
+vllm = "^0.10.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
