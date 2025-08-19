@@ -38,7 +38,7 @@ class PatientAgent:
         self._init_model(self.model, api_key)
         
         # Initialize prompt
-        system_prompt_template = self._init_prompt(system_prompt_path)
+        system_prompt_template = self._init_prompt(self.visit_type, system_prompt_path)
         self.system_prompt = self.build_prompt(system_prompt_template)
         
         log("PatientAgent initialized successfully", color=True)
@@ -135,6 +135,7 @@ class PatientAgent:
                 prompt_file_name = "ed_uti_patient_sys.txt" if self.patient_conditions.get('diagnosis').lower() == 'urinary tract infection' else "ed_patient_sys.txt"
             file_path = resources.files("patientsim.assets.prompt").joinpath(prompt_file_name)
             system_prompt = file_path.read_text()
+        
         # User can specify a custom system prompt
         else:
             if not os.path.exists(system_prompt_path):
