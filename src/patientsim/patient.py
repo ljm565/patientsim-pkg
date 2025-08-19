@@ -205,7 +205,16 @@ class PatientAgent:
     def __call__(self,
                  user_prompt: str,
                  using_multi_turn: bool = True) -> str:
-        
+        """
+        Call the patient agent with a user prompt and return the response.
+
+        Args:
+            user_prompt (str): The user prompt to send to the patient agent.
+            using_multi_turn (bool, optional): Whether to use multi-turn conversation. Defaults to True.
+
+        Returns:
+            str: The response from the patient agent.
+        """
         response = self.client(
             user_prompt=user_prompt,
             system_prompt=self.system_prompt,
@@ -215,30 +224,3 @@ class PatientAgent:
         )
         return response
         
-
-
-# if __name__ == "__main__":
-#     patient_agent = PatientAgent('gemini-2.5-flash-preview-05-20', 
-#                                  visit_type='emergency_department',
-#                                  confusion_level='normal',
-#                                  personality='plain',
-#                                  recall_level='no_history',
-#                                  lang_proficiency_level='C',)
-    
-#     response = patient_agent(
-#         user_prompt="How can I help you?",
-#         using_multi_turn=False
-#     )
-#     print(response)
-    
-#     response = patient_agent(
-#         user_prompt="Can you explain more detailed symptoms of your condition?",
-#         using_multi_turn=False
-#     )
-#     print(response)
-    
-#     response = patient_agent(
-#         user_prompt="Okay, is this time your first visit to the hospital?",
-#         using_multi_turn=False
-#     )
-#     print(response)
