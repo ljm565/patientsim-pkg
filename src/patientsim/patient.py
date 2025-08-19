@@ -2,14 +2,11 @@ import os
 from typing import Optional
 from importlib import resources
 
-from google import genai
-from openai import OpenAI
-from dotenv import load_dotenv
-
 from patientsim.registry.persona import *
 from patientsim.utils import colorstr, log
 from patientsim.utils.desc_utils import *
 from patientsim.utils.common_utils import *
+from patientsim.client import GeminiClient, GPTClient
 
 
 
@@ -38,7 +35,7 @@ class PatientAgent:
         
         # Initialize model, API client, and other parameters
         self.model = model
-        self._init_model(api_key)
+        self._init_model(self.model, api_key)
         
         # Initialize prompt
         system_prompt_template = self._init_prompt(system_prompt_path)
@@ -95,29 +92,25 @@ class PatientAgent:
         
         # Set random seed for reproducibility
         if self.random_seed:
-            set_seed()
+            set_seed(self.random_seed)
 
 
-    def _init_model(self, api_key: Optional[str] = None) -> None:
+    def _init_model(self, model: str, api_key: Optional[str] = None) -> None:
         """
         Initialize the model and API client based on the specified model type.
 
         Args:
+            model (str): The patient agent model to use.
             api_key (Optional[str], optional): API key for the model. If not provided, it will be fetched from environment variables.
                                                Defaults to None.
 
         Raises:
             ValueError: If the specified model is not supported.
         """
-        load_dotenv(override=True)
         if 'gemini' in self.model.lower():
-            if not api_key:
-                api_key = os.environ.get("GOOGLE_API_KEY", None)
-            self.client = genai.Client(api_key=api_key)
+            self.client = GeminiClient(model, api_key)
         elif 'gpt' in self.model.lower():       # TODO: Support o3, o4 models etc.
-            if not api_key:
-                api_key = os.environ.get("OPENAI_API_KEY", None)
-            self.client = OpenAI(api_key=api_key)
+            self.client = GPTClient(model, api_key)
         else:
             raise ValueError(colorstr("red", f"Unsupported model: {self.model}. Supported models are 'gemini' and 'gpt'."))
         
@@ -137,7 +130,7 @@ class PatientAgent:
         # Initialilze with the default system prompt
         if not system_prompt_path:
             if visit_type == 'outpatient':
-                prompt_file_name = "op_patient_sys.txt" 
+                prompt_file_name = "op_patient_sys.txt"     # TODO: Make outpatient system prompt
             else:
                 prompt_file_name = "ed_uti_patient_sys.txt" if self.patient_conditions.get('diagnosis').lower() == 'urinary tract infection' else "ed_patient_sys.txt"
             file_path = resources.files("patientsim.assets.prompt").joinpath(prompt_file_name)
@@ -170,7 +163,16 @@ class PatientAgent:
             raise ValueError(colorstr("red", f"Invalid visiting type: {self.visit_type}. Supported types: {', '.join(VISIT_TYPE)}"))
         
     
-    def build_prompt(self, system_prompt_template: str):
+    def build_prompt(self, system_prompt_template: str) -> str:
+        """
+        Build the system prompt for the patient agent.
+
+        Args:
+            system_prompt_template (str): The template for the system prompt.
+
+        Returns:
+            str: The formatted system prompt with patient attributes filled in.
+        """
         personality_desc = get_personality_description(self.personality)
         recall_desc = get_recall_description(self.recall_level)
         confusion_desc = get_confusion_description(self.confusion_level)
@@ -198,13 +200,45 @@ class PatientAgent:
         )
         prompt_valid_check(system_prompt, self.patient_conditions)
         return system_prompt
+    
+
+    def __call__(self,
+                 user_prompt: str,
+                 using_multi_turn: bool = True) -> str:
+        
+        response = self.client(
+            user_prompt=user_prompt,
+            system_prompt=self.system_prompt,
+            using_multi_turn=using_multi_turn,
+            temperature=self.temperature,
+            seed=self.random_seed
+        )
+        return response
+        
 
 
-
-if __name__ == "__main__":
-    patient_agent = PatientAgent('gemini-2.5-pro', 
-                                 confusion_level='high',
-                                 personality='plain',
-                                 recall_level='no_history',
-                                 lang_proficiency_level='C',
-                                 )
+# if __name__ == "__main__":
+#     patient_agent = PatientAgent('gemini-2.5-flash-preview-05-20', 
+#                                  visit_type='emergency_department',
+#                                  confusion_level='normal',
+#                                  personality='plain',
+#                                  recall_level='no_history',
+#                                  lang_proficiency_level='C',)
+    
+#     response = patient_agent(
+#         user_prompt="How can I help you?",
+#         using_multi_turn=False
+#     )
+#     print(response)
+    
+#     response = patient_agent(
+#         user_prompt="Can you explain more detailed symptoms of your condition?",
+#         using_multi_turn=False
+#     )
+#     print(response)
+    
+#     response = patient_agent(
+#         user_prompt="Okay, is this time your first visit to the hospital?",
+#         using_multi_turn=False
+#     )
+#     print(response)
