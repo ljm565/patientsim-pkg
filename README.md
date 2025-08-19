@@ -14,7 +14,8 @@ An official Python package for simulating patient interactions, called `PatientS
 
 
 ### Recent updates 📣
-* *August 2025 (v0.1.0)*: Build a dedicated LLM agent for patients that can adopt a patient persona.
+* *August 2025 (v0.1.1)*: Added support for a doctor persona in the LLM agent for the emergency department.
+* *August 2025 (v0.1.0)*: Initial release: Introduced a dedicated LLM agent for patients that allows customization of patient personas.
 
 &nbsp;
 
