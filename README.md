@@ -54,6 +54,7 @@ print(patientsim.__version__)
 # export OPENAI_API_KEY="YOUR_KEY"  (Linux/Mac)
 # setx OPENAI_API_KEY "YOUR_KEY"     (Windows)
 
+# Patient Agent
 patient_agent = PatientAgent('gpt-4o', 
                               visit_type='emergency_department',
                               random_seed=42,
@@ -67,9 +68,17 @@ response = patient_agent(
 
 print(response)
 
+# Doctor Agent
+doctor_agent = DoctorAgent('gpt-4o')
+print(doctor_agent.system_prompt)
+
+
 # Example response:
-# "I'm experiencing some concerning symptoms, but I can't recall any specific medical history."
+# > I'm experiencing some concerning symptoms, but I can't recall any specific medical history.
+# > You are playing the role of a kind and patient doctor...
 ```
+
+
 
 &nbsp;
 
