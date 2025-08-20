@@ -205,13 +205,15 @@ class PatientAgent:
 
     def __call__(self,
                  user_prompt: str,
-                 using_multi_turn: bool = True) -> str:
+                 using_multi_turn: bool = True,
+                 verbose: bool = True) -> str:
         """
         Call the patient agent with a user prompt and return the response.
 
         Args:
             user_prompt (str): The user prompt to send to the patient agent.
             using_multi_turn (bool, optional): Whether to use multi-turn conversation. Defaults to True.
+            verbose (bool, optional): Whether to print verbose output. Defaults to True.
 
         Returns:
             str: The response from the patient agent.
@@ -220,6 +222,7 @@ class PatientAgent:
             user_prompt=user_prompt,
             system_prompt=self.system_prompt,
             using_multi_turn=using_multi_turn,
+            verbose=verbose,
             temperature=self.temperature,
             seed=self.random_seed
         )
