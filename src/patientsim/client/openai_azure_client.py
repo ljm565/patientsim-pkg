@@ -1,5 +1,5 @@
 import os
-from openai import OpenAI
+from openai import AzureOpenAI
 from dotenv import load_dotenv
 from typing import List, Optional
 
@@ -7,28 +7,38 @@ from patientsim.utils import log
 
 
 
-class GPTClient:
-    def __init__(self, model: str, api_key: Optional[str] = None):
+class GPTAzureClient:
+    def __init__(self, model: str, api_key: Optional[str] = None, azure_endpoint: Optional[str] = None):
         self.model = model
-        self._init_environment(api_key)
+        self._init_environment(api_key, azure_endpoint)
         self.histories = list()
         self.__first_turn = True
 
 
-    def _init_environment(self, api_key: Optional[str] = None):
+    def _init_environment(self, api_key: Optional[str] = None, azure_endpoint: Optional[str] = None):
         """
         Initialize OpenAI client.
 
         Args:
             api_key (Optional[str]): API key for OpenAI. If not provided, it will
                                      be loaded from environment variables.
+            azure_endpoint (Optional[str]): Azure endpoint for OpenAI. If not provided,
+                                           it will be set to a default value.
         """
         if not api_key:
             load_dotenv(override=True)
             api_key = os.environ.get("OPENAI_API_KEY", None)
-        self.client = OpenAI(api_key=api_key)
 
-    
+        if not azure_endpoint:
+            load_dotenv(override=True)
+            azure_endpoint = os.environ.get("AZURE_OPENAI_ENDPOINT", None)
+
+        self.client = AzureOpenAI(
+            azure_endpoint=azure_endpoint,
+            api_key=api_key,
+            api_version="2024-10-21",
+        )
+
     def reset_history(self, verbose: bool = True):
         """
         Reset the conversation history.
@@ -41,7 +51,7 @@ class GPTClient:
         if verbose:
             log('Conversation history has been reset.', color=True)
 
-    
+
     def __make_payload(self, user_prompt: str) -> List[dict]:
         """
         Create a payload for API calls to the GPT model.

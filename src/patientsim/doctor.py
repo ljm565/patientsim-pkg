@@ -6,7 +6,7 @@ from patientsim.registry.persona import *
 from patientsim.utils import colorstr, log
 from patientsim.utils.desc_utils import *
 from patientsim.utils.common_utils import *
-from patientsim.client import GeminiClient, GPTClient
+from patientsim.client import GeminiClient, GeminiVertexClient, GPTClient, GPTAzureClient
 
 
 
@@ -16,6 +16,12 @@ class DoctorAgent:
                  max_inferences: int = 15,
                  top_k_diagnosis: int = 5,
                  api_key: Optional[str] = None,
+                 use_azure: bool = False,
+                 use_vertex: bool = False,
+                 azure_endpoint: Optional[str] = None,
+                 genai_project_id: Optional[str] = None,
+                 genai_project_location: Optional[str] = None,
+                 genai_credential_path: Optional[str] = None,
                  system_prompt_path: Optional[str] = None,
                  **kwargs) -> None:
         
@@ -27,11 +33,11 @@ class DoctorAgent:
         
         # Initialize model, API client, and other parameters
         self.model = model
-        self._init_model(self.model, api_key)
+        self._init_model(self.model, api_key, use_azure, use_vertex, azure_endpoint, genai_project_id, genai_project_location, genai_credential_path)
         
         # Initialize prompt
-        system_prompt_template = self._init_prompt(system_prompt_path)
-        self.system_prompt = self.build_prompt(system_prompt_template)
+        self._system_prompt_template = self._init_prompt(system_prompt_path)
+        self.build_prompt()
         
         log("DoctorAgent initialized successfully", color=True)
     
@@ -54,7 +60,17 @@ class DoctorAgent:
             set_seed(self.random_seed)
 
 
-    def _init_model(self, model: str, api_key: Optional[str] = None) -> None:
+    def _init_model(
+        self,
+        model: str,
+        api_key: Optional[str] = None,
+        use_azure: bool = False,
+        use_vertex: bool = False,
+        azure_endpoint: Optional[str] = None,
+        genai_project_id: Optional[str] = None,
+        genai_project_location: Optional[str] = None,
+        genai_credential_path: Optional[str] = None,
+    ) -> None:
         """
         Initialize the model and API client based on the specified model type.
 
@@ -62,14 +78,20 @@ class DoctorAgent:
             model (str): The doctor agent model to use.
             api_key (Optional[str], optional): API key for the model. If not provided, it will be fetched from environment variables.
                                                Defaults to None.
+            use_azure (bool): Whether to use Azure OpenAI client.
+            use_vertex (bool): Whether to use Google Vertex AI client.
+            azure_endpoint (Optional[str], optional): Azure OpenAI endpoint. Defaults to None.
+            genai_project_id (Optional[str], optional): Google Cloud project ID. Defaults to None.
+            genai_project_location (Optional[str], optional): Google Cloud project location. Defaults to None.
+            genai_credential_path (Optional[str], optional): Path to Google Cloud credentials JSON file. Defaults to None.
 
         Raises:
             ValueError: If the specified model is not supported.
         """
         if 'gemini' in self.model.lower():
-            self.client = GeminiClient(model, api_key)
+            self.client = GeminiVertexClient(model, genai_project_id, genai_project_location, genai_credential_path) if use_vertex else GeminiClient(model, api_key)
         elif 'gpt' in self.model.lower():       # TODO: Support o3, o4 models etc.
-            self.client = GPTClient(model, api_key)
+            self.client = GPTAzureClient(model, api_key, azure_endpoint) if use_azure else GPTClient(model, api_key)
         else:
             raise ValueError(colorstr("red", f"Unsupported model: {self.model}. Supported models are 'gemini' and 'gpt'."))
         
@@ -100,44 +122,54 @@ class DoctorAgent:
         return system_prompt
     
     
-    def build_prompt(self, system_prompt_template: str) -> str:
+    def build_prompt(self) -> None:
         """
         Build the system prompt for the doctor agent using the provided template and patient conditions.
-
-        Args:
-            system_prompt_template (str): The template for the system prompt, which may include placeholders for patient conditions and other parameters.
-
-        Returns:
-            str: The formatted system prompt with patient conditions and inference details filled in.
         """
-        system_prompt = system_prompt_template.format(
+        self.system_prompt = self._system_prompt_template.format(
             total_idx=self.max_inferences,
             curr_idx=self.current_inference,
             remain_idx=self.max_inferences - self.current_inference,
             top_k_diagnosis=self.top_k_diagnosis,
             **self.patient_conditions
         )
-        return system_prompt
     
+
+    def update_system_prompt(self):
+        """
+        Identify the current inference round stage and update the system prompt accordingly.
+        """
+        # First history is index 0, so assign stage 1 instead of 0.
+        self.current_inference = max(1, len(list(filter(lambda x: (not isinstance(x, dict) and x.role == 'model') or \
+               (isinstance(x, dict) and x.get('role') == 'assistant'), self.client.histories))))
+        self.build_prompt()
+        if len(self.client.histories) and isinstance(self.client.histories[0], dict) and self.client.histories[0].get('role') == 'system':
+            self.client.histories[0]['content'] = self.system_prompt
+
 
     def __call__(self,
                  user_prompt: str,
-                 using_multi_turn: bool = True) -> str:
+                 using_multi_turn: bool = True,
+                 verbose: bool = True) -> str:
         """
         Call the patient agent with a user prompt and return the response.
 
         Args:
             user_prompt (str): The user prompt to send to the patient agent.
             using_multi_turn (bool, optional): Whether to use multi-turn conversation. Defaults to True.
+            verbose (bool, optional): Whether to print verbose output. Defaults to True.
 
         Returns:
             str: The response from the patient agent.
         """
+        self.update_system_prompt()
         response = self.client(
             user_prompt=user_prompt,
             system_prompt=self.system_prompt,
             using_multi_turn=using_multi_turn,
+            greeting=self.doctor_greet,     # Only affects the first turn
+            verbose=verbose,
             temperature=self.temperature,
-            seed=self.random_seed
+            seed=self.random_seed,
         )
         return response

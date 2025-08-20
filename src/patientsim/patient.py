@@ -6,7 +6,7 @@ from patientsim.registry.persona import *
 from patientsim.utils import colorstr, log
 from patientsim.utils.desc_utils import *
 from patientsim.utils.common_utils import *
-from patientsim.client import GeminiClient, GPTClient
+from patientsim.client import GeminiClient, GeminiVertexClient, GPTClient, GPTAzureClient
 
 
 
@@ -19,6 +19,12 @@ class PatientAgent:
                  confusion_level: str = 'normal',
                  lang_proficiency_level: str = 'C',
                  api_key: Optional[str] = None,
+                 use_azure: bool = False,
+                 use_vertex: bool = False,
+                 azure_endpoint: Optional[str] = None,
+                 genai_project_id: Optional[str] = None,
+                 genai_project_location: Optional[str] = None,
+                 genai_credential_path: Optional[str] = None,
                  system_prompt_path: Optional[str] = None,
                  **kwargs) -> None:
         
@@ -35,7 +41,7 @@ class PatientAgent:
         
         # Initialize model, API client, and other parameters
         self.model = model
-        self._init_model(self.model, api_key)
+        self._init_model(self.model, api_key, use_azure, use_vertex, azure_endpoint, genai_project_id, genai_project_location, genai_credential_path)
         
         # Initialize prompt
         system_prompt_template = self._init_prompt(self.visit_type, system_prompt_path)
@@ -95,7 +101,17 @@ class PatientAgent:
             set_seed(self.random_seed)
 
 
-    def _init_model(self, model: str, api_key: Optional[str] = None) -> None:
+    def _init_model(
+        self,
+        model: str,
+        api_key: Optional[str] = None,
+        use_azure: bool = False,
+        use_vertex: bool = False,
+        azure_endpoint: Optional[str] = None,
+        genai_project_id: Optional[str] = None,
+        genai_project_location: Optional[str] = None,
+        genai_credential_path: Optional[str] = None,
+    ) -> None:
         """
         Initialize the model and API client based on the specified model type.
 
@@ -103,14 +119,20 @@ class PatientAgent:
             model (str): The patient agent model to use.
             api_key (Optional[str], optional): API key for the model. If not provided, it will be fetched from environment variables.
                                                Defaults to None.
+            use_azure (bool): Whether to use Azure OpenAI client.
+            use_vertex (bool): Whether to use Google Vertex AI client.
+            azure_endpoint (Optional[str], optional): Azure OpenAI endpoint. Defaults to None.
+            genai_project_id (Optional[str], optional): Google Cloud project ID. Defaults to None.
+            genai_project_location (Optional[str], optional): Google Cloud project location. Defaults to None.
+            genai_credential_path (Optional[str], optional): Path to Google Cloud credentials JSON file. Defaults to None.
 
         Raises:
             ValueError: If the specified model is not supported.
         """
         if 'gemini' in self.model.lower():
-            self.client = GeminiClient(model, api_key)
+            self.client = GeminiVertexClient(model, genai_project_id, genai_project_location, genai_credential_path) if use_vertex else GeminiClient(model, api_key)
         elif 'gpt' in self.model.lower():       # TODO: Support o3, o4 models etc.
-            self.client = GPTClient(model, api_key)
+            self.client = GPTAzureClient(model, api_key, azure_endpoint) if use_azure else GPTClient(model, api_key)
         else:
             raise ValueError(colorstr("red", f"Unsupported model: {self.model}. Supported models are 'gemini' and 'gpt'."))
         
@@ -205,13 +227,15 @@ class PatientAgent:
 
     def __call__(self,
                  user_prompt: str,
-                 using_multi_turn: bool = True) -> str:
+                 using_multi_turn: bool = True,
+                 verbose: bool = True) -> str:
         """
         Call the patient agent with a user prompt and return the response.
 
         Args:
             user_prompt (str): The user prompt to send to the patient agent.
             using_multi_turn (bool, optional): Whether to use multi-turn conversation. Defaults to True.
+            verbose (bool, optional): Whether to print verbose output. Defaults to True.
 
         Returns:
             str: The response from the patient agent.
@@ -220,6 +244,7 @@ class PatientAgent:
             user_prompt=user_prompt,
             system_prompt=self.system_prompt,
             using_multi_turn=using_multi_turn,
+            verbose=verbose,
             temperature=self.temperature,
             seed=self.random_seed
         )

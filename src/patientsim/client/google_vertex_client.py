@@ -1,6 +1,7 @@
 import os
 from google import genai
 from google.genai import types
+from google.genai.types import HttpOptions
 from dotenv import load_dotenv
 from typing import List, Optional
 
@@ -8,31 +9,58 @@ from patientsim.utils import log
 
 
 
-class GeminiClient:
-    def __init__(self, model: str, api_key: Optional[str] = None):
+class GeminiVertexClient:
+    def __init__(
+        self,
+        model: str,
+        project_id: Optional[str] = None,
+        project_location: Optional[str] = None,
+        vertex_credentials: Optional[str] = None,
+    ):
         self.model = model
-        self._init_environment(api_key)
+        self._init_environment(project_id, project_location, vertex_credentials)
         self.histories = list()
         self.__first_turn = True
 
-
-    def _init_environment(self, api_key: Optional[str] = None):
+    def _init_environment(
+        self,
+        project_id: Optional[str] = None,
+        project_location: Optional[str] = None,
+        vertex_credentials: Optional[str] = None,
+    ):
         """
         Initialize Goolge GCP Gemini client.
 
         Args:
-            api_key (Optional[str]): API key for OpenAI. If not provided, it will
-                                     be loaded from environment variables.
+            project_id (Optional[str]): Google Cloud project ID. If not provided, it will
+                                        be loaded from environment variables.
+            project_location (Optional[str]): Google Cloud project location. If not provided,
+                                              it will be loaded from environment variables.
+            vertex_credentials (Optional[str]): Path to the Google Cloud credentials file. If not provided,
+                                               it will be loaded from environment variables.
         """
-        if not api_key:
+        os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = os.environ.get("GOOGLE_APPLICATION_CREDENTIALS", None) if vertex_credentials is None else vertex_credentials
+        if not project_id or not project_location:
             load_dotenv(override=True)
-            api_key = os.environ.get("GOOGLE_API_KEY", None)
-        self.client = genai.Client(api_key=api_key)
-
+            project_id = os.environ.get("GOOGLE_PROJECT_ID", None) if not project_id else project_id
+            project_location = (
+                os.environ.get("GOOGLE_PROJECT_LOCATION", None)
+                if not project_location
+                else project_location
+            )
+        self.client = genai.Client(
+            vertexai=True,
+            project=project_id,
+            location=project_location,
+            http_options=HttpOptions(api_version="v1"),
+        )
 
     def reset_history(self, verbose: bool = True):
         """
         Reset the conversation history.
+
+        Args:
+            verbose (bool): Whether to print verbose output. Defaults to True.
         """
         self.__first_turn = True
         self.histories = list()
