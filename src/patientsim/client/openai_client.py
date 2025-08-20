@@ -12,7 +12,6 @@ class GPTClient:
         self.model = model
         self._init_environment(api_key)
         self.histories = list()
-        self._multi_turn_system_prompt_already_set = False
         self.__first_turn = True
 
 
@@ -30,29 +29,16 @@ class GPTClient:
         self.client = OpenAI(api_key=api_key)
 
     
-    def reset_history(self, keep_system_prompt: bool = False):
+    def reset_history(self, verbose: bool = True):
         """
         Reset the conversation history.
 
         Args:
-            keep_system_prompt (bool): Whether to retain the system prompt after reset.
-                                       Defaults to False.
+            verbose (bool): Whether to print verbose output. Defaults to True.
         """
         self.__first_turn = True
-        system_message = None
-        if keep_system_prompt:
-            for msg in self.histories:
-                if msg["role"] == "system":
-                    system_message = msg
-                    break
-        else:
-            self._multi_turn_system_prompt_already_set = False
-
-        self.histories = []
-        if system_message:
-            self.histories.append(system_message)
-            log('Conversation history has been reset except for the system prompt.', color=True)
-        else:
+        self.histories = list()
+        if verbose:
             log('Conversation history has been reset.', color=True)
 
     
@@ -83,6 +69,8 @@ class GPTClient:
                  user_prompt: str,
                  system_prompt: Optional[str] = None,
                  using_multi_turn: bool = True,
+                 greeting: Optional[str] = None,
+                 verbose: bool = True,
                  **kwargs) -> str:
         """
         Sends a chat completion request to the model with optional image input and system prompt.
@@ -91,6 +79,8 @@ class GPTClient:
             user_prompt (str): The main user prompt or query to send to the model.
             system_prompt (Optional[str], optional): An optional system-level prompt to set context or behavior. Defaults to None.
             using_multi_turn (bool): Whether to structure it as multi-turn. Defaults to True.
+            greeting (Optional[str]): An optional greeting message to include in the conversation. Defaults to None.
+            verbose (bool): Whether to print verbose output. Defaults to True.
 
         Raises:
             e: Any exception raised during the API call is re-raised.
@@ -100,48 +90,32 @@ class GPTClient:
         """
         
         try:
-            if using_multi_turn:
-                # To ensure the only one system prompt
-                if self._multi_turn_system_prompt_already_set and system_prompt:
-                    if self.__first_turn:
-                        log('Since the initial system prompt was already set, the current system prompt is ignored.', 'warning')
-                        self.__first_turn = False
-                    system_prompt = None
-
+            # To ensure empty history
+            if not using_multi_turn:
+                self.reset_history(verbose)
+            
+            if self.__first_turn:
                 # System prompt
                 if system_prompt:
                     self.histories.append({"role": "system", "content": system_prompt})
-                    self._multi_turn_system_prompt_already_set = True
+            
+                # Greeting
+                if greeting and self.__first_turn:
+                    self.histories.append({"role": "assistant", "content": greeting})
                 
-                # User prompt
-                self.histories += self.__make_payload(user_prompt)
-                
-                # Model response
-                response = self.client.chat.completions.create(
-                    model=self.model,
-                    messages=self.histories,
-                    **kwargs
-                )
-                assistant_msg = response.choices[0].message
-                self.histories.append({"role": assistant_msg.role, "content": assistant_msg.content})
-
-            else:
-                # To ensure empty history
-                self.reset_history()
-                
-                # System prompt
-                payloads = [{"role": "system", "content": system_prompt}] if system_prompt else []
-                
-                # User prompt
-                payloads += self.__make_payload(user_prompt)
-                
-                # Model response
-                response = self.client.chat.completions.create(
-                    model=self.model,
-                    messages=payloads,
-                    **kwargs
-                )
-                assistant_msg = response.choices[0].message
+                self.__first_turn = False
+                    
+            # User prompt
+            self.histories += self.__make_payload(user_prompt)
+            
+            # Model response
+            response = self.client.chat.completions.create(
+                model=self.model,
+                messages=self.histories,
+                **kwargs
+            )
+            assistant_msg = response.choices[0].message
+            self.histories.append({"role": assistant_msg.role, "content": assistant_msg.content})
 
             return assistant_msg.content
         
