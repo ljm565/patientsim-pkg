@@ -75,7 +75,7 @@ class DoctorAgent:
         Initialize the model and API client based on the specified model type.
 
         Args:
-            model (str): The patient agent model to use.
+            model (str): The doctor agent model to use.
             api_key (Optional[str], optional): API key for the model. If not provided, it will be fetched from environment variables.
                                                Defaults to None.
             use_azure (bool): Whether to use Azure OpenAI client.
