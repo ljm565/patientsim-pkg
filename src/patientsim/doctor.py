@@ -116,6 +116,8 @@ class DoctorAgent:
     def update_system_prompt(self, current_inference: int):
         self.current_inference = current_inference
         self.build_prompt()
+        if isinstance(self.client.histories[0], dict) and self.client.histories[0].get('role') == 'system':
+            self.client.histories[0]['content'] = self.system_prompt
 
 
     def __call__(self,
