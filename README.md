@@ -14,6 +14,7 @@ An official Python package for simulating patient interactions, called `PatientS
 
 
 ### Recent updates 📣
+* *August 2025 (v0.1.2)*: Added support for emergency department simulation, Azure for GPT, and Vertex AI for the Gemini API.
 * *August 2025 (v0.1.1)*: Added support for a doctor persona in the LLM agent for the emergency department.
 * *August 2025 (v0.1.0)*: Initial release: Introduced a dedicated LLM agent for patients that allows customization of patient personas.
 
