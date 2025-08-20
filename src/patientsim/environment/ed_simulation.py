@@ -9,8 +9,8 @@ from patientsim.utils.common_utils import detect_termination
 
 class EDSimulation:
     def __init__(self, 
-                 patient_agent: DoctorAgent,
-                 doctor_agent: PatientAgent,
+                 patient_agent: PatientAgent,
+                 doctor_agent: DoctorAgent,
                  max_inferences: int = 15):
         
         # Initialize simulation parameters
