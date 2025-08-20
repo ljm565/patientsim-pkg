@@ -91,6 +91,7 @@ GOOGLE_APPLICATION_CREDENTIALS="/path/to/google_credentials.json" # Path to GCP 
 ```python
 # Patient Agent (gpt)
 from patientsim import PatientAgent
+
 patient_agent = PatientAgent('gpt-4o', 
                               visit_type='emergency_department',
                               random_seed=42,
@@ -123,6 +124,8 @@ print(response)
 
 **Doctor Agent**
 ```python
+from patientsim import DoctorAgent
+
 doctor_agent = DoctorAgent('gpt-4o', use_azure=False)
 doctor_agent = DoctorAgent('gemini-2.5-flash', use_vertex=False)
 print(doctor_agent.system_prompt)
@@ -132,6 +135,8 @@ print(doctor_agent.system_prompt)
 
 ### Run Emergency Department Simulation
 ```python
+from patientsim.environment import EDSimulation
+
 simulation_env = EDSimulation(patient_agent, doctor_agent)
 simulation_env.simulate()
 
