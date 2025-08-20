@@ -94,13 +94,15 @@ class GPTClient:
             if not using_multi_turn:
                 self.reset_history(verbose)
             
-            # System prompt
-            if system_prompt:
-                self.histories.append({"role": "system", "content": system_prompt})
+            if self.__first_turn:
+                # System prompt
+                if system_prompt:
+                    self.histories.append({"role": "system", "content": system_prompt})
             
-            # Greeting
-            if greeting and self.__first_turn:
-                self.histories.append({"role": "assistant", "content": greeting})
+                # Greeting
+                if greeting and self.__first_turn:
+                    self.histories.append({"role": "assistant", "content": greeting})
+                
                 self.__first_turn = False
                     
             # User prompt
