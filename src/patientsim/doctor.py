@@ -30,8 +30,8 @@ class DoctorAgent:
         self._init_model(self.model, api_key)
         
         # Initialize prompt
-        system_prompt_template = self._init_prompt(system_prompt_path)
-        self.system_prompt = self.build_prompt(system_prompt_template)
+        self._system_prompt_template = self._init_prompt(system_prompt_path)
+        self.build_prompt()
         
         log("DoctorAgent initialized successfully", color=True)
     
@@ -100,35 +100,35 @@ class DoctorAgent:
         return system_prompt
     
     
-    def build_prompt(self, system_prompt_template: str) -> str:
+    def build_prompt(self) -> None:
         """
         Build the system prompt for the doctor agent using the provided template and patient conditions.
-
-        Args:
-            system_prompt_template (str): The template for the system prompt, which may include placeholders for patient conditions and other parameters.
-
-        Returns:
-            str: The formatted system prompt with patient conditions and inference details filled in.
         """
-        system_prompt = system_prompt_template.format(
+        self.system_prompt = self._system_prompt_template.format(
             total_idx=self.max_inferences,
             curr_idx=self.current_inference,
             remain_idx=self.max_inferences - self.current_inference,
             top_k_diagnosis=self.top_k_diagnosis,
             **self.patient_conditions
         )
-        return system_prompt
     
+
+    def update_system_prompt(self, current_inference: int):
+        self.current_inference = current_inference
+        self.build_prompt()
+
 
     def __call__(self,
                  user_prompt: str,
-                 using_multi_turn: bool = True) -> str:
+                 using_multi_turn: bool = True,
+                 verbose: bool = True) -> str:
         """
         Call the patient agent with a user prompt and return the response.
 
         Args:
             user_prompt (str): The user prompt to send to the patient agent.
             using_multi_turn (bool, optional): Whether to use multi-turn conversation. Defaults to True.
+            verbose (bool, optional): Whether to print verbose output. Defaults to True.
 
         Returns:
             str: The response from the patient agent.
@@ -137,7 +137,9 @@ class DoctorAgent:
             user_prompt=user_prompt,
             system_prompt=self.system_prompt,
             using_multi_turn=using_multi_turn,
+            greeting=self.doctor_greet,     # Only affects the first turn
+            verbose=verbose,
             temperature=self.temperature,
-            seed=self.random_seed
+            seed=self.random_seed,
         )
         return response
