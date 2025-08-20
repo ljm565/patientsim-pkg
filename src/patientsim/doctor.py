@@ -30,8 +30,8 @@ class DoctorAgent:
         self._init_model(self.model, api_key)
         
         # Initialize prompt
-        system_prompt_template = self._init_prompt(system_prompt_path)
-        self.system_prompt = self.build_prompt(system_prompt_template)
+        self._system_prompt_template = self._init_prompt(system_prompt_path)
+        self.build_prompt()
         
         log("DoctorAgent initialized successfully", color=True)
     
@@ -100,44 +100,54 @@ class DoctorAgent:
         return system_prompt
     
     
-    def build_prompt(self, system_prompt_template: str) -> str:
+    def build_prompt(self) -> None:
         """
         Build the system prompt for the doctor agent using the provided template and patient conditions.
-
-        Args:
-            system_prompt_template (str): The template for the system prompt, which may include placeholders for patient conditions and other parameters.
-
-        Returns:
-            str: The formatted system prompt with patient conditions and inference details filled in.
         """
-        system_prompt = system_prompt_template.format(
+        self.system_prompt = self._system_prompt_template.format(
             total_idx=self.max_inferences,
             curr_idx=self.current_inference,
             remain_idx=self.max_inferences - self.current_inference,
             top_k_diagnosis=self.top_k_diagnosis,
             **self.patient_conditions
         )
-        return system_prompt
     
+
+    def update_system_prompt(self):
+        """
+        Identify the current inference round stage and update the system prompt accordingly.
+        """
+        # First history is index 0, so assign stage 1 instead of 0.
+        self.current_inference = max(1, len(list(filter(lambda x: (not isinstance(x, dict) and x.role == 'model') or \
+               (isinstance(x, dict) and x.get('role') == 'assistant'), self.client.histories))))
+        self.build_prompt()
+        if len(self.client.histories) and isinstance(self.client.histories[0], dict) and self.client.histories[0].get('role') == 'system':
+            self.client.histories[0]['content'] = self.system_prompt
+
 
     def __call__(self,
                  user_prompt: str,
-                 using_multi_turn: bool = True) -> str:
+                 using_multi_turn: bool = True,
+                 verbose: bool = True) -> str:
         """
         Call the patient agent with a user prompt and return the response.
 
         Args:
             user_prompt (str): The user prompt to send to the patient agent.
             using_multi_turn (bool, optional): Whether to use multi-turn conversation. Defaults to True.
+            verbose (bool, optional): Whether to print verbose output. Defaults to True.
 
         Returns:
             str: The response from the patient agent.
         """
+        self.update_system_prompt()
         response = self.client(
             user_prompt=user_prompt,
             system_prompt=self.system_prompt,
             using_multi_turn=using_multi_turn,
+            greeting=self.doctor_greet,     # Only affects the first turn
+            verbose=verbose,
             temperature=self.temperature,
-            seed=self.random_seed
+            seed=self.random_seed,
         )
         return response
