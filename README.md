@@ -45,6 +45,9 @@ print(patientsim.__version__)
 
 
 ## Quick Starts 🚀
+*If you plan to run this simulation with real clinical data or other sensitive information, you must use Vertex AI (for Gemini) or Azure OpenAI (for GPT).
+When using Azure OpenAI, be sure to opt out of human review of the data to maintain compliance and ensure privacy protection.*
+
 > [!NOTE]
 > Before using the LLM API, you must provide the API key for each model directly or specify it in a `.env` file.
 > * *gemini-\**: If you set the model to a Gemini LLM, you must have your own GCP API key in the `.env` file, with the name `GOOGLE_API_KEY`. The code will automatically communicate with GCP.
@@ -61,32 +64,27 @@ print(patientsim.__version__)
 > 4. Generate a credential key in JSON format and set the path to this JSON file in the `GOOGLE_APPLICATION_CREDENTIALS` environment variable.
 
 ### Environment Variables
-```python
-# OpenAI / Azure (Linux/Mac)
-export OPENAI_API_KEY="YOUR_OPENAI_KEY"
-export AZURE_ENDPOINT="https://your-azure-openai-endpoint"
+Before using the LLM API, you need to provide the API key (or the required environment variables for each model) either directly or in a .env file.
+```bash
+# For GPT API without Azure
+OPENAI_API_KEY="YOUR_OPENAI_KEY"
 
-# Google Vertex / Gemini (Linux/Mac)
-export GOOGLE_PROJECT_ID="your-gcp-project-id"
-export GOOGLE_PROJECT_LOCATION="us-central1"   # example
-export GOOGLE_APPLICATION_CREDENTIALS="/path/to/google_credentials.json"
-export GEMINI_API_KEY="YOUR_GEMINI_API_KEY"    # if not using Vertex
+# For GPT API with Azure
+AZURE_ENDPOINT="https://your-azure-openai-endpoint"
 
-# Windows (PowerShell example)
-# setx OPENAI_API_KEY "YOUR_OPENAI_KEY"
-# setx AZURE_ENDPOINT "https://your-azure-openai-endpoint"
-# setx GOOGLE_PROJECT_ID "your-gcp-project-id"
-# setx GOOGLE_PROJECT_LOCATION "us-central1"
-# setx GOOGLE_APPLICATION_CREDENTIALS "C:\path\to\service_account.json"
-# setx GEMINI_API_KEY "YOUR_GEMINI_API_KEY"
+# For Gemini API without Vertex AI
+GOOGLE_API_KEY="YOUR_GEMINI_API_KEY" 
+
+# For Gemini API with Vertex AI
+GOOGLE_PROJECT_ID="your-gcp-project-id"
+GOOGLE_PROJECT_LOCATION="your-gcp-project-location"  # (e.g., us-central1)
+GOOGLE_APPLICATION_CREDENTIALS="/path/to/google_credentials.json" # Path to GCP service account credentials (JSON file)
 ```
-
-
 
 ### Agent Initialization
 **Patient Agent**
 ```python
-# Patient Agent (gpt + azure)
+# Patient Agent (gpt)
 from patientsim import PatientAgent
 patient_agent = PatientAgent('gpt-4o', 
                               visit_type='emergency_department',
@@ -94,36 +92,18 @@ patient_agent = PatientAgent('gpt-4o',
                               random_sampling=False,
                               temperature=0,
                               api_key=OPENAI_API_KEY,
-                              use_azure=True, #  set False if using OpenAI directly
-                              azure_endpoint=AZURE_ENDPOINT # required for Azure
+                              use_azure=False   # Set True if using Azure
                             )
 
-response = patient_agent(
-    user_prompt="How can I help you?",
-)
-
-print(response)
-
 # Patient Agent (gemini)
-# Use Vertex AI
 patient_agent = PatientAgent('gemini-2.5-flash', 
                               visit_type='emergency_department',
                               random_seed=42,
                               random_sampling=False,
                               temperature=0,
-                              use_vertex=True,
-                              genai_project_id=GOOGLE_PROJECT_ID,
-                              genai_project_location=GOOGLE_PROJECT_LOCATION,
-                              genai_credential_path=GOOGLE_APPLICATION_CREDENTIALS)
-                    
-# Use Gemini API directly          
-patient_agent = PatientAgent('gemini-2.5-flash', 
-                              visit_type='emergency_department',
-                              random_seed=42,
-                              random_sampling=False,
-                              temperature=0,
-                              use_vertex=False,
-                              api_key=GEMINI_API_KEY)
+                              api_key=GOOGLE_API_KEY,
+                              use_vertex=False # Set True for use Vertex AI
+                            )
 
 response = patient_agent(
     user_prompt="How can I help you?",
@@ -138,19 +118,8 @@ print(response)
 
 **Doctor Agent**
 ```python
-doctor_agent = DoctorAgent('gpt-4o', 
-                            api_key=OPENAI_API_KEY,
-                            use_azure=True, #  set False if using OpenAI directly
-                            azure_endpoint=AZURE_ENDPOINT # required for Azure
-                        )
-
-doctor_agent = DoctorAgent('gemini-2.5-flash', 
-                            api_key=GEMINI_API_KEY,
-                            use_vertex=True, #  set False if using OpenAI directly
-                            genai_project_id=GOOGLE_PROJECT_ID,
-                            genai_project_location=GOOGLE_PROJECT_LOCATION,
-                            genai_credential_path=GOOGLE_APPLICATION_CREDENTIALS
-                        )
+doctor_agent = DoctorAgent('gpt-4o', use_azure=False)
+doctor_agent = DoctorAgent('gemini-2.5-flash', use_vertex=False)
 print(doctor_agent.system_prompt)
 ```
 
@@ -161,10 +130,11 @@ simulation_env = EDSimulation(patient_agent, doctor_agent)
 simulation_env.simulate()
 
 # Example response:
-# > Doctor   [0%]  : Hello, how can I help you?
-# > Patient  [6%]  : I'm experiencing some concerning symptoms,
-# > Doctor   [6%]  : Hello, how can I help you?
-# > Patient  [13%]  : I'm experiencing some concerning symptoms,
+# Example response:
+# > Doctor   [0%]    : Hello, how can I help you?
+# > Patient   [6%]    : I'm experiencing some concerning symptoms,
+# > Doctor   [6%]    : I'm sorry to hear that you're experiencing difficulty. When dit this start?
+# > Patient   [13%]  : Three hours prior to my arrival.
 # > ...
 ```
 
