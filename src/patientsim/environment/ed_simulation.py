@@ -53,7 +53,8 @@ class EDSimulation:
         # Start conversation
         doctor_greet = self.doctor_agent.doctor_greet
         dialog_history = [{"role": "Doctor", "content": doctor_greet}]
-        log(f"{colorstr('blue', 'Doctor')} [0%]: {doctor_greet}")
+        role = f"{colorstr('blue', 'Doctor')}  [0%]"
+        log(f"{role:<23}: {doctor_greet}")
 
         for inference_idx in range(self.max_inferences):
             progress = int(((inference_idx + 1) / self.max_inferences) * 100)
@@ -65,7 +66,8 @@ class EDSimulation:
                 verbose=verbose
             )
             dialog_history.append({"role": "Patient", "content": patient_response})
-            log(f"{colorstr('green', 'Patient')} [{progress}%]: {patient_response}")
+            role = f"{colorstr('green', 'Patient')} [{progress}%]"
+            log(f"{role:<23}: {patient_response}")
 
             # Obtain response from doctor
             self.update_env()
@@ -76,7 +78,8 @@ class EDSimulation:
                 verbose=verbose
             )
             dialog_history.append({"role": "Doctor", "content": doctor_response})
-            log(f"{colorstr('blue', 'Doctor')} [{progress}%]: {doctor_response}")
+            role = f"{colorstr('blue', 'Doctor')}  [{progress}%]"
+            log(f"{role:<23}: {doctor_response}")
 
             # If early termination is detected, break the loop
             if detect_termination(doctor_response):
