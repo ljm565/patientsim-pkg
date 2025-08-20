@@ -98,7 +98,6 @@ class GPTAzureClient:
         Returns:
             str: The model's response message.
         """
-
         try:
             # To ensure empty history
             if not using_multi_turn:

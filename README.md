@@ -63,6 +63,8 @@ When using Azure OpenAI, be sure to opt out of human review of the data to maint
 >    * Assign the role **Vertex AI Platform Express User**
 > 4. Generate a credential key in JSON format and set the path to this JSON file in the `GOOGLE_APPLICATION_CREDENTIALS` environment variable.
 
+&nbsp;
+
 ### Environment Variables
 Before using the LLM API, you need to provide the API key (or the required environment variables for each model) either directly or in a .env file.
 ```bash
@@ -80,6 +82,8 @@ GOOGLE_PROJECT_ID="your-gcp-project-id"
 GOOGLE_PROJECT_LOCATION="your-gcp-project-location"  # (e.g., us-central1)
 GOOGLE_APPLICATION_CREDENTIALS="/path/to/google_credentials.json" # Path to GCP service account credentials (JSON file)
 ```
+
+&nbsp;
 
 ### Agent Initialization
 **Patient Agent**
@@ -123,18 +127,19 @@ doctor_agent = DoctorAgent('gemini-2.5-flash', use_vertex=False)
 print(doctor_agent.system_prompt)
 ```
 
+&nbsp;
 
-### Run ED Simulation
+### Run Emergency Department Simulation
 ```python
 simulation_env = EDSimulation(patient_agent, doctor_agent)
 simulation_env.simulate()
 
 # Example response:
 # Example response:
-# > Doctor   [0%]    : Hello, how can I help you?
-# > Patient   [6%]    : I'm experiencing some concerning symptoms,
-# > Doctor   [6%]    : I'm sorry to hear that you're experiencing difficulty. When dit this start?
-# > Patient   [13%]  : Three hours prior to my arrival.
+# > Doctor   [0%]  : Hello, how can I help you?
+# > Patient  [6%]  : I'm experiencing some concerning symptoms,
+# > Doctor   [6%]  : I'm sorry to hear that you're experiencing difficulty. When dit this start?
+# > Patient  [13%] : Three hours prior to my arrival.
 # > ...
 ```
 
