@@ -117,10 +117,10 @@ class PatientAgent:
 
         Args:
             model (str): The patient agent model to use.
-            use_azure (bool): Whether to use Azure OpenAI client.
-            use_vertex (bool): Whether to use Google Vertex AI client.
             api_key (Optional[str], optional): API key for the model. If not provided, it will be fetched from environment variables.
                                                Defaults to None.
+            use_azure (bool): Whether to use Azure OpenAI client.
+            use_vertex (bool): Whether to use Google Vertex AI client.
             azure_endpoint (Optional[str], optional): Azure OpenAI endpoint. Defaults to None.
             genai_project_id (Optional[str], optional): Google Cloud project ID. Defaults to None.
             genai_project_location (Optional[str], optional): Google Cloud project location. Defaults to None.
