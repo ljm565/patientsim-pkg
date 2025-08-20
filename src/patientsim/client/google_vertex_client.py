@@ -39,7 +39,7 @@ class GeminiVertexClient:
             vertex_credentials (Optional[str]): Path to the Google Cloud credentials file. If not provided,
                                                it will be loaded from environment variables.
         """
-        os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = vertex_credentials
+        os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = os.environ.get("GOOGLE_APPLICATION_CREDENTIALS", None) if vertex_credentials is None else vertex_credentials
         if not project_id or not project_location:
             load_dotenv(override=True)
             project_id = os.environ.get("GOOGLE_PROJECT_ID", None) if not project_id else project_id
