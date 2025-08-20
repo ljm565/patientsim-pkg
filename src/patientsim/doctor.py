@@ -113,8 +113,13 @@ class DoctorAgent:
         )
     
 
-    def update_system_prompt(self, current_inference: int):
-        self.current_inference = current_inference
+    def update_system_prompt(self):
+        """
+        Identify the current inference round stage and update the system prompt accordingly.
+        """
+        # First history is index 0, so assign stage 1 instead of 0.
+        self.current_inference = max(1, len(list(filter(lambda x: (not isinstance(x, dict) and x.role == 'model') or \
+               (isinstance(x, dict) and x.get('role') == 'assistant'), self.client.histories))))
         self.build_prompt()
         if len(self.client.histories) and isinstance(self.client.histories[0], dict) and self.client.histories[0].get('role') == 'system':
             self.client.histories[0]['content'] = self.system_prompt
@@ -135,6 +140,7 @@ class DoctorAgent:
         Returns:
             str: The response from the patient agent.
         """
+        self.update_system_prompt()
         response = self.client(
             user_prompt=user_prompt,
             system_prompt=self.system_prompt,

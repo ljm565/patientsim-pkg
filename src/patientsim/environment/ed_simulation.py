@@ -22,30 +22,35 @@ class EDSimulation:
     
 
     def _sanity_check(self):
+        """
+        Verify and synchronize the maximum number of inference rounds 
+        between the Doctor agent and the ED simulation.
+
+        If the configured values do not match, a warning is logged and 
+        the Doctor agent's configuration is updated to align with the 
+        ED simulation. The system prompt is also rebuilt accordingly.
+        """
         if not self.doctor_agent.max_inferences == self.max_inferences:
             log("The maximum number of inferences between the Doctor agent and the ED simulation does not match.", level="warning")
             log(f"The simulation will start with the value ({self.max_inferences}) configured in the ED simulation, \
                 and the Doctor agent system prompt will be updated accordingly.", level="warning")
             self.doctor_agent.max_inferences = self.max_inferences
             self.doctor_agent.build_prompt()
-        if not self.doctor_agent.current_inference == self.current_inference:
-            log("The current inference index between the Doctor agent and the ED simulation does not match.", level="warning")
-            log(f"The simulation will start with the value ({self.current_inference}) configured in the ED simulation, \
-                and the Doctor agent system prompt will be updated accordingly.", level="warning")
-            self.doctor_agent.current_inference = self.current_inference
-            self.doctor_agent.build_prompt()
-
-
-    def reset_env(self):
-        self.current_inference = 0
-        
-
-    def update_env(self):
-        self.current_inference += 1
-        self.doctor_agent.update_system_prompt(self.current_inference)
 
 
     def simulate(self, verbose: bool = True):
+        """
+        Run a full conversation simulation between the Doctor and Patient agents
+        in the emergency department setting.
+
+        The simulation alternates turns between the Doctor and Patient until
+        the maximum number of inference rounds is reached or early termination
+        is detected. During the final turn, the Doctor agent is instructed to
+        provide its top 5 differential diagnoses.
+
+        Args:
+            verbose (bool, optional): Whether to print verbose output. Defaults to True.
+        """
         if verbose:
             log(f"Patient prompt:\n{self.patient_agent.system_prompt}")
             log(f"Doctor prompt:\n{self.doctor_agent.system_prompt}")
@@ -70,7 +75,6 @@ class EDSimulation:
             log(f"{role:<23}: {patient_response}")
 
             # Obtain response from doctor
-            self.update_env()
             doctor_response = self.doctor_agent(
                 user_prompt=dialog_history[-1]["content"] + "\nThis is the final turn. Now, you must provide your top5 differential diagnosis." \
                     if inference_idx == self.max_inferences - 1 else dialog_history[-1]["content"],
