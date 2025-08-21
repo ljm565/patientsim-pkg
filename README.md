@@ -9,12 +9,21 @@
 ---
 
 An official Python package for simulating patient interactions, called `PatientSim`.
+By setting a patient persona and assigning it to the LLM agent, you can generate outcomes of interactions with a doctor.
+The patient persona consists of four elements, resulting in 37 unique combinations:
+* Personality: `plain` (default), `verbose`, `pleasing`, `impatient`, `distrust`, `overanxious`.
+* Language Proficiency: `C` (default), `B`, `A` (C means the highest level).
+* Medical History Recall Level: `no_history` (default), `low`, `high`.
+* Cognitive Confusion Level: `normal` (default), `moderate`, `high`.
+
+The simulation scenarios also have two visit types:
+* Outpatient (currently not supported)
+* Emergency: `emergency_department`
 
 &nbsp;
 
-
 ### Recent updates 📣
-* *August 2025 (v0.1.2)*: Added support for emergency department simulation, Azure for GPT, and Vertex AI for the Gemini API.
+* *August 2025 (v0.1.3)*: Added support for emergency department simulation, Azure for GPT, and Vertex AI for the Gemini API.
 * *August 2025 (v0.1.1)*: Added support for a doctor persona in the LLM agent for the emergency department.
 * *August 2025 (v0.1.0)*: Initial release: Introduced a dedicated LLM agent for patients that allows customization of patient personas.
 
@@ -87,9 +96,10 @@ GOOGLE_APPLICATION_CREDENTIALS="/path/to/google_credentials.json" # Path to GCP 
 &nbsp;
 
 ### Agent Initialization
-**Patient Agent**
+#### Patient Agent
+1. Default settings usage.
 ```python
-# Patient Agent (gpt)
+# Patient Agent (GPT)
 from patientsim import PatientAgent
 
 patient_agent = PatientAgent('gpt-4o', 
@@ -101,7 +111,7 @@ patient_agent = PatientAgent('gpt-4o',
                               use_azure=False   # Set True if using Azure
                             )
 
-# Patient Agent (gemini)
+# Patient Agent (Gemini)
 patient_agent = PatientAgent('gemini-2.5-flash', 
                               visit_type='emergency_department',
                               random_seed=42,
@@ -122,7 +132,58 @@ print(response)
 # > You are playing the role of a kind and patient doctor...
 ```
 
-**Doctor Agent**
+&nbsp;
+
+2. Apply custom persona.
+```python
+from patientsim import PatientAgent
+
+patient_agent = PatientAgent('gpt-4o', 
+                              visit_type='emergency_department',
+                              personality='verbose',
+                              recall_level='low',
+                              confusion_level='moderate',
+                              lang_proficiency_level='B',
+                              age='45',
+                              tobacco='Denies tobacco use',
+                              allergies="Penicillins",
+                              ...
+                            )
+```
+> Persona Arguments:
+> * `visit_type` (str): `outpatient` (default, currently not supported), `emergency_department`
+> * `personality` (str): `plain` (default), `verbose`, `pleasing`, `impatient`, `distrust`, `overanxious`
+> * `recall_level` (str): `no_history` (default), `low`, `high`
+> * `confusion_level` (str): `normal` (default), `moderate`, `high`
+> * `lang_proficiency_level`: `C` (default), `B`, `A` (C means the highest level).
+> * `age` (str): Patient's age. Default: "N/A".
+> * `gender` (str): Patient's gender. Default: "N/A".
+> * `race` (str): Patient's race or ethnicity. Default: "N/A".
+> * `tobacco` (str): Patient's tobacco use status (e.g., current, former, never). Default: "N/A".
+> * `alcohol` (str): Patient's alcohol use status (e.g., current, former, never). Default: "N/A".
+> * `illicit_drug` (str): Patient's illicit drug use status. Default: "N/A".
+> * `exercise` (str): Patient's physical activity level or exercise habits. Default: "N/A".
+> * `marital_status` (str): Patient's marital status (e.g., single, married, divorced). Default: "N/A".
+> * `children` (str): Number of children or information about dependents. Default: "N/A".
+> * `living_situation` (str): Patient's current living arrangement (e.g., alone, with family). Default: "N/A".
+> * `occupation` (str): Patient's occupation or job information. Default: "N/A".
+> * `insurance` (str): Patient's health insurance status or type. Default: "N/A".
+> * `allergies` (str): Known allergies of the patient (medication, food, environmental). Default: "N/A".
+> * `family_medical_history` (str): Relevant medical history of the patient's family. Default: "N/A".
+> * `medical_device` (str): Any medical devices the patient uses (e.g., pacemaker, insulin pump). Default: "N/A".
+> * `medical_history` (str): Patient's past medical history (conditions, surgeries, hospitalizations). Default: "N/A".
+> * `present_illness_positive` (str): Positive symptoms or findings for the current illness. Default: "N/A".
+> * `present_illness_negative` (str): Negative symptoms or findings for the current illness. Default: "N/A".
+> * `chiefcomplaint` (str): Main reason the patient seeks medical attention. Default: "N/A".
+> * `pain` (str): Description or severity of pain, if any. Default: "N/A".
+> * `medication` (str): Current medications the patient is taking. Default: "N/A".
+> * `arrival_transport` (str): How the patient arrived at the facility (e.g., ambulance, private vehicle). Default: "N/A".
+> * `disposition` (str): Planned disposition after evaluation (e.g., discharge, admission). Default: "N/A".
+> * `diagnosis` (str): Diagnosed condition(s) for the patient. Default: "N/A".
+
+&nbsp;
+
+#### Doctor Agent
 ```python
 from patientsim import DoctorAgent
 
