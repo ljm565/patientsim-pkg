@@ -8,6 +8,7 @@ __pycache__/
 .out
 .whl
 .env
+.pypirc
 
 # Shell scripts
 *.sh

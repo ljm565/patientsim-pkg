@@ -1,9 +1,10 @@
 [tool.poetry]
 name = "patientsim"
-version = "0.1.0"
-description = ""
-authors = ["Jun-Min Lee <ljm56897@gmail.com>"]
+version = "0.1.2"
+description = "A Python package for simulating patient interactions."
+authors = ["Jun-Min Lee <ljm56897@gmail.com>", "Daeun Kyung <kyungdaeun@kaist.ac.kr>"]
 readme = "README.md"
+license = "BSD-3-Clause"
 packages = [
     { include = "patientsim", from = "src" }
 ]
@@ -14,6 +15,9 @@ include = [
     { path = "src/patientsim/assets/*.json", format = "wheel" }
 ]
 
+[tool.poetry.urls]
+"Source" = "https://github.com/ljm565/patientsim-pkg"
+
 [tool.poetry.dependencies]
 python = ">=3.11,<3.13"
 tqdm = "4.67.1"
@@ -22,6 +26,10 @@ google-genai = "1.19.0"
 openai = ">=1.87.0,<=1.90.0"
 vllm = "^0.10.0"
 
+
+[tool.poetry.group.deve.dependencies]
+build = "^1.3.0"
+twine = "^6.1.0"
 
 [build-system]
 requires = ["poetry-core"]
