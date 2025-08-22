@@ -13,7 +13,7 @@ from patientsim.client import GeminiClient, GeminiVertexClient, GPTClient, GPTAz
 class PatientAgent:
     def __init__(self,
                  model: str,
-                 visit_type: str = 'outpatient',
+                 visit_type: str = 'emergency_department',
                  personality: str = 'plain',
                  recall_level: str = 'no_history',
                  confusion_level: str = 'normal',
@@ -94,24 +94,30 @@ class PatientAgent:
             'arrival_transport': kwargs.get('arrival_transport', 'N/A'),
             'disposition': kwargs.get('disposition', 'N/A'),
             'diagnosis': kwargs.get('diagnosis', 'N/A'),
+            'department': kwargs.get('department', None),
+            'symptom': kwargs.get('symptom', None),
         }
+
+        if self.visit_type == 'outpatient':
+            assert self.patient_conditions.get('department'), \
+                log(colorstr("red", "To simulate outpatient, you should provide a specific department."))
+            assert self.patient_conditions.get('symptom'), \
+                log(colorstr("red", "To simulate outpatient, you should provide at least a simple symptom."))
         
         # Set random seed for reproducibility
         if self.random_seed:
             set_seed(self.random_seed)
 
 
-    def _init_model(
-        self,
-        model: str,
-        api_key: Optional[str] = None,
-        use_azure: bool = False,
-        use_vertex: bool = False,
-        azure_endpoint: Optional[str] = None,
-        genai_project_id: Optional[str] = None,
-        genai_project_location: Optional[str] = None,
-        genai_credential_path: Optional[str] = None,
-    ) -> None:
+    def _init_model(self,
+                    model: str,
+                    api_key: Optional[str] = None,
+                    use_azure: bool = False,
+                    use_vertex: bool = False,
+                    azure_endpoint: Optional[str] = None,
+                    genai_project_id: Optional[str] = None,
+                    genai_project_location: Optional[str] = None,
+                    genai_credential_path: Optional[str] = None) -> None:
         """
         Initialize the model and API client based on the specified model type.
 

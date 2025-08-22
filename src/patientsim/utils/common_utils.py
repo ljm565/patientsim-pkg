@@ -65,6 +65,7 @@ def prompt_valid_check(prompt: str, data_dict: dict) -> None:
         raise ValueError(colorstr("red", f"Missing keys in the prompt: {missing_keys}. Please ensure all required keys are present in the data dictionary."))
 
 
+
 def check_all_patterns_present(text: str) -> bool:
     """
     Check if all patterns for differential diagnosis are present in the text.
@@ -79,9 +80,10 @@ def check_all_patterns_present(text: str) -> bool:
     return all(re.search(pattern, text) for pattern in patterns)
 
 
-def detect_termination(text: str) -> bool:
+
+def detect_ed_termination(text: str) -> bool:
     """
-    Detect if the text indicates the end of a conversation or the provision of differential diagnoses.
+    Detect if the text indicates the end of a conversation or the provision of differential diagnoses in the ED simulation.
 
     Args:
         text (str): The text to analyze for termination indicators.
@@ -93,3 +95,21 @@ def detect_termination(text: str) -> bool:
     all_present = check_all_patterns_present(text)
     end_flag = any(key.lower() in text.lower() for key in ddx_key)
     return all_present or end_flag
+
+
+
+def detect_op_termination(text: str) -> bool:
+    """
+    Detect if the text indicates the end of a conversation or the provision of differential diagnoses in the OP simulation.
+
+    Args:
+        text (str): The text to analyze for termination indicators.
+
+    Returns:
+        bool: True if termination indicators are found, False otherwise.
+    """
+    try:
+        pattern = re.compile(r'Answer:\s*\d+\.\s*(.+)')
+        return bool(pattern.search(text))
+    except:
+        return False

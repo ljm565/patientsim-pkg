@@ -9,6 +9,7 @@ __pycache__/
 .whl
 .env
 .pypirc
+.vscode
 
 # Shell scripts
 *.sh

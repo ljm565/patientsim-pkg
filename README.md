@@ -1,7 +1,6 @@
 # PatientSim-pkg
 
 ---
-![Python Versions](https://img.shields.io/badge/python-3.11%2B%2C%203.12%2B-blue)
 ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/patientsim)
 ![PyPI Version](https://img.shields.io/pypi/v/patientsim)
 ![Downloads](https://img.shields.io/pypi/dm/patientsim)
@@ -17,12 +16,13 @@ The patient persona consists of four elements, resulting in 37 unique combinatio
 * Cognitive Confusion Level: `normal` (default), `moderate`, `high`.
 
 The simulation scenarios also have two visit types:
-* Outpatient (currently not supported)
+* Outpatient `outpatient`
 * Emergency: `emergency_department`
 
 &nbsp;
 
 ### Recent updates 📣
+* *August 2025 (v0.1.4)*: Added support for outpatient simulation and added exception handling for None-type responses from Gemini.
 * *August 2025 (v0.1.3)*: Added support for emergency department simulation, Azure for GPT, and Vertex AI for the Gemini API.
 * *August 2025 (v0.1.1)*: Added support for a doctor persona in the LLM agent for the emergency department.
 * *August 2025 (v0.1.0)*: Initial release: Introduced a dedicated LLM agent for patients that allows customization of patient personas.
@@ -31,7 +31,7 @@ The simulation scenarios also have two visit types:
 
 &nbsp;
 
-## Installation
+## Installation 🛠️
 ```bash
 pip install patientsim
 ```
@@ -151,7 +151,7 @@ patient_agent = PatientAgent('gpt-4o',
                             )
 ```
 > Persona Arguments:
-> * `visit_type` (str): `outpatient` (default, currently not supported), `emergency_department`
+> * `visit_type` (str): `emergency_department` (default), `outpatient`
 > * `personality` (str): `plain` (default), `verbose`, `pleasing`, `impatient`, `distrust`, `overanxious`
 > * `recall_level` (str): `no_history` (default), `low`, `high`
 > * `confusion_level` (str): `normal` (default), `moderate`, `high`
