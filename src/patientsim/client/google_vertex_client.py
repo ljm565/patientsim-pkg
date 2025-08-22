@@ -135,8 +135,13 @@ class GeminiVertexClient:
                     **kwargs
                 )
             )
+            
+            if response.text == None:
+                replace_text = 'Could you tell me again?'
+                self.histories.append(types.Content(role='model', parts=[types.Part.from_text(text=replace_text)]))
+                return replace_text
+            
             self.histories.append(types.Content(role='model', parts=[types.Part.from_text(text=response.text)]))
-
             return response.text
         
         except Exception as e:
