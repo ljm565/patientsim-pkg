@@ -151,7 +151,7 @@ patient_agent = PatientAgent('gpt-4o',
                             )
 ```
 > Persona Arguments:
-> * `visit_type` (str): `outpatient` (default, currently not supported), `emergency_department`
+> * `visit_type` (str): `emergency_department` (default), `outpatient` (currently not supported)
 > * `personality` (str): `plain` (default), `verbose`, `pleasing`, `impatient`, `distrust`, `overanxious`
 > * `recall_level` (str): `no_history` (default), `low`, `high`
 > * `confusion_level` (str): `normal` (default), `moderate`, `high`

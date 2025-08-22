@@ -13,7 +13,7 @@ from patientsim.client import GeminiClient, GeminiVertexClient, GPTClient, GPTAz
 class PatientAgent:
     def __init__(self,
                  model: str,
-                 visit_type: str = 'outpatient',
+                 visit_type: str = 'emergency_department',
                  personality: str = 'plain',
                  recall_level: str = 'no_history',
                  confusion_level: str = 'normal',
@@ -94,7 +94,12 @@ class PatientAgent:
             'arrival_transport': kwargs.get('arrival_transport', 'N/A'),
             'disposition': kwargs.get('disposition', 'N/A'),
             'diagnosis': kwargs.get('diagnosis', 'N/A'),
+            'department': kwargs.get('department', None)
         }
+
+        if self.visit_type == 'outpatient':
+            assert self.patient_conditions.get('department'), \
+                log(colorstr("red", "To simulate outpatient, you should provide a specific department."))
         
         # Set random seed for reproducibility
         if self.random_seed:
