@@ -108,5 +108,8 @@ def detect_op_termination(text: str) -> bool:
     Returns:
         bool: True if termination indicators are found, False otherwise.
     """
-    pattern = re.compile(r'Answer:\s*\d+\.\s*(.+)')
-    return bool(pattern.search(text))
+    try:
+        pattern = re.compile(r'Answer:\s*\d+\.\s*(.+)')
+        return bool(pattern.search(text))
+    except:
+        return False
