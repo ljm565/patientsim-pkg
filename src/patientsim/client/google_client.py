@@ -10,13 +10,14 @@ from patientsim.utils import log
 
 class GeminiClient:
     def __init__(self, model: str, api_key: Optional[str] = None):
+        # Initialize
         self.model = model
         self._init_environment(api_key)
         self.histories = list()
         self.__first_turn = True
 
 
-    def _init_environment(self, api_key: Optional[str] = None):
+    def _init_environment(self, api_key: Optional[str] = None) -> None:
         """
         Initialize Goolge GCP Gemini client.
 
@@ -30,7 +31,7 @@ class GeminiClient:
         self.client = genai.Client(api_key=api_key)
 
 
-    def reset_history(self, verbose: bool = True):
+    def reset_history(self, verbose: bool = True) -> None:
         """
         Reset the conversation history.
         """

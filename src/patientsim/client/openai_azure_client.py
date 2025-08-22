@@ -9,13 +9,14 @@ from patientsim.utils import log
 
 class GPTAzureClient:
     def __init__(self, model: str, api_key: Optional[str] = None, azure_endpoint: Optional[str] = None):
+        # Initialize
         self.model = model
         self._init_environment(api_key, azure_endpoint)
         self.histories = list()
         self.__first_turn = True
 
 
-    def _init_environment(self, api_key: Optional[str] = None, azure_endpoint: Optional[str] = None):
+    def _init_environment(self, api_key: Optional[str] = None, azure_endpoint: Optional[str] = None) -> None:
         """
         Initialize OpenAI client.
 
@@ -23,7 +24,7 @@ class GPTAzureClient:
             api_key (Optional[str]): API key for OpenAI. If not provided, it will
                                      be loaded from environment variables.
             azure_endpoint (Optional[str]): Azure endpoint for OpenAI. If not provided,
-                                           it will be set to a default value.
+                                            it will be set to a default value.
         """
         if not api_key:
             load_dotenv(override=True)
@@ -39,7 +40,8 @@ class GPTAzureClient:
             api_version="2024-10-21",
         )
 
-    def reset_history(self, verbose: bool = True):
+
+    def reset_history(self, verbose: bool = True) -> None:
         """
         Reset the conversation history.
 

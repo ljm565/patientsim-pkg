@@ -1,33 +1,31 @@
 import os
+from dotenv import load_dotenv
+from typing import List, Optional
 from google import genai
 from google.genai import types
 from google.genai.types import HttpOptions
-from dotenv import load_dotenv
-from typing import List, Optional
 
 from patientsim.utils import log
 
 
 
 class GeminiVertexClient:
-    def __init__(
-        self,
-        model: str,
-        project_id: Optional[str] = None,
-        project_location: Optional[str] = None,
-        vertex_credentials: Optional[str] = None,
-    ):
+    def __init__(self,
+                 model: str,
+                 project_id: Optional[str] = None,
+                 project_location: Optional[str] = None,
+                 vertex_credentials: Optional[str] = None):
+        # Initialize
         self.model = model
         self._init_environment(project_id, project_location, vertex_credentials)
         self.histories = list()
         self.__first_turn = True
 
-    def _init_environment(
-        self,
-        project_id: Optional[str] = None,
-        project_location: Optional[str] = None,
-        vertex_credentials: Optional[str] = None,
-    ):
+
+    def _init_environment(self,
+                          project_id: Optional[str] = None,
+                          project_location: Optional[str] = None,
+                          vertex_credentials: Optional[str] = None) -> None:
         """
         Initialize Goolge GCP Gemini client.
 
@@ -55,7 +53,8 @@ class GeminiVertexClient:
             http_options=HttpOptions(api_version="v1"),
         )
 
-    def reset_history(self, verbose: bool = True):
+
+    def reset_history(self, verbose: bool = True) -> None:
         """
         Reset the conversation history.
 

@@ -101,17 +101,15 @@ class PatientAgent:
             set_seed(self.random_seed)
 
 
-    def _init_model(
-        self,
-        model: str,
-        api_key: Optional[str] = None,
-        use_azure: bool = False,
-        use_vertex: bool = False,
-        azure_endpoint: Optional[str] = None,
-        genai_project_id: Optional[str] = None,
-        genai_project_location: Optional[str] = None,
-        genai_credential_path: Optional[str] = None,
-    ) -> None:
+    def _init_model(self,
+                    model: str,
+                    api_key: Optional[str] = None,
+                    use_azure: bool = False,
+                    use_vertex: bool = False,
+                    azure_endpoint: Optional[str] = None,
+                    genai_project_id: Optional[str] = None,
+                    genai_project_location: Optional[str] = None,
+                    genai_credential_path: Optional[str] = None) -> None:
         """
         Initialize the model and API client based on the specified model type.
 
