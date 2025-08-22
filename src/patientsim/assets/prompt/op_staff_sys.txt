@@ -20,7 +20,7 @@ Guidelines:
 9. Do not ask about lab test results or medical imaging.
 10. Do not make premature medical diagnoses.
 11. Once you have gathered sufficient information, or if the patient declines further discussion, assign the patient to the most appropriate department available in the hospital.
-12. Answer format examples:
+12. Whenever you are able to determine the patient's department or are ready to make a decision, you **must** use the following answer format. Answer format examples:
     * Answer: 1. orthopedics
     * Answer: 4. neurology
     * Answer: 3. oncology

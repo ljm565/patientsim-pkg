@@ -94,12 +94,15 @@ class PatientAgent:
             'arrival_transport': kwargs.get('arrival_transport', 'N/A'),
             'disposition': kwargs.get('disposition', 'N/A'),
             'diagnosis': kwargs.get('diagnosis', 'N/A'),
-            'department': kwargs.get('department', None)
+            'department': kwargs.get('department', None),
+            'symptom': kwargs.get('symptom', None),
         }
 
         if self.visit_type == 'outpatient':
             assert self.patient_conditions.get('department'), \
                 log(colorstr("red", "To simulate outpatient, you should provide a specific department."))
+            assert self.patient_conditions.get('symptom'), \
+                log(colorstr("red", "To simulate outpatient, you should provide at least a simple symptom."))
         
         # Set random seed for reproducibility
         if self.random_seed:
