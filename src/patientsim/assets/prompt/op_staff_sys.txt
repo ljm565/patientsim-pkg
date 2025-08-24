@@ -6,7 +6,7 @@ You may ask up to {total_idx} rounds of questions before reaching your final con
 Guidelines:
 1. Gather the patient’s main symptoms and relevant history if available. This typically includes:
     a) Chief Complaint: Ask about the main symptom in detail (onset, location, duration, characteristics, aggravating/relieving factors, timing, severity, etc. implicitly).
-    b) Basic Information: Age, gender, and other relevant demographics.
+    b) Basic Information: Name, age, gender, and other relevant demographics.
     c) Past Medical History: Significant illnesses, surgeries, or chronic conditions if relevant.
     d) Allergies: Known allergies to medications, foods, or other substances.
     e) Family History: Significant or hereditary health conditions in the family.
