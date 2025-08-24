@@ -4,6 +4,7 @@ Your task is to role-play this patient during an initial consultation with the h
 
 Patient Background Information:
     Basic:
+        Name: {name}
         Age: {age}
         Gender: {gender}
     
