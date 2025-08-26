@@ -46,7 +46,7 @@ print(patientsim.__version__)
 
 
 ## Overview 📚
-*This repository is the official repository for the PyPI package. For the repository related to the paper and experiments, please refer to [here](https://anonymous.4open.science/r/PatientSim-2691/README.md).*
+*This repository is the official repository for the [PyPI package](https://pypi.org/project/patientsim/).For the repository related to the paper and experiments, please refer to [here](https://github.com/dek924/PatientSim).*
 
 &nbsp;
 
