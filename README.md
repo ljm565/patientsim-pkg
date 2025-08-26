@@ -156,8 +156,10 @@ patient_agent = PatientAgent('gpt-4o',
 > * `recall_level` (str): `no_history` (default), `low`, `high`
 > * `confusion_level` (str): `normal` (default), `moderate`, `high`
 > * `lang_proficiency_level`: `C` (default), `B`, `A` (C means the highest level).
-> * `age` (str): Patient's age. Default: "N/A".
-> * `gender` (str): Patient's gender. Default: "N/A".
+> * `name` (str): Patient's name. Default: "James Lee".
+> * `birth_date` (str): Patient's birth_date. Default: random date between 1960-01-01 and 2000-12-31.
+> * `age` (str): Patient's age. Default: random.randint(20, 80). he value is randomly generated and does not depend on the birth date.
+> * `gender` (str): Patient's gender. Default: random.choice(['male', 'female']).
 > * `race` (str): Patient's race or ethnicity. Default: "N/A".
 > * `tobacco` (str): Patient's tobacco use status (e.g., current, former, never). Default: "N/A".
 > * `alcohol` (str): Patient's alcohol use status (e.g., current, former, never). Default: "N/A".

@@ -1,4 +1,5 @@
 import os
+import random
 from typing import Optional
 from importlib import resources
 
@@ -55,6 +56,9 @@ class PatientAgent:
         Initialize the environment with default settings.
         """
         self.random_seed = kwargs.get('random_seed', None)
+        # Set random seed for reproducibility
+        if self.random_seed:
+            set_seed(self.random_seed)
         self.temperature = kwargs.get('temperature', 0.2)   # For various responses. If you want deterministic responses, set it to 0.
         self.num_word_sample = kwargs.get('num_word_sample', 3)
         self.random_sampling = kwargs.get('random_sampling', True)
@@ -70,8 +74,10 @@ class PatientAgent:
             'med_C': split_string(kwargs.get('med_C', [])),
         }
         self.patient_conditions = {
-            'age': kwargs.get('age', 'N/A'),
-            'gender': kwargs.get('gender', 'N/A'),
+            'name': kwargs.get('name', 'James Lee'),
+            'birth_date': kwargs.get('birth_date', generate_random_date()),
+            'age': kwargs.get('age', str(random.randint(20, 80))),
+            'gender': kwargs.get('gender', random.choice(['male', 'female'])),
             'race': kwargs.get('race', 'N/A'),
             'tobacco': kwargs.get('tobacco', 'N/A'),
             'alcohol': kwargs.get('alcohol', 'N/A'),
@@ -104,10 +110,6 @@ class PatientAgent:
             assert self.patient_conditions.get('symptom'), \
                 log(colorstr("red", "To simulate outpatient, you should provide at least a simple symptom."))
         
-        # Set random seed for reproducibility
-        if self.random_seed:
-            set_seed(self.random_seed)
-
 
     def _init_model(self,
                     model: str,
