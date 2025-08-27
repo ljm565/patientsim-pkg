@@ -2,6 +2,7 @@ import re
 import random
 import numpy as np
 from typing import Union
+from datetime import datetime, timedelta
 
 import torch
 
@@ -113,3 +114,90 @@ def detect_op_termination(text: str) -> bool:
         return bool(pattern.search(text))
     except:
         return False
+
+
+def str_to_datetime(iso_time: Union[str, datetime]) -> datetime:
+    """
+    Convert a string representation of a date/time to a datetime object, or return the input if it's already a datetime/date object.
+
+    Args:
+        iso_time (Union[str, datetime]): The input date/time, either as a string in the specified format or as a datetime/date object.
+
+    Returns:
+        datetime: A datetime object corresponding to the input string, or the original datetime/date if already provided.
+
+    Raises:
+        ValueError: If `iso_time` is not a string or datetime/date object.
+    """
+    try:
+        if isinstance(iso_time, str): 
+            return datetime.fromisoformat(iso_time)
+        return iso_time
+    except:
+        raise ValueError(colorstr("red", f"`iso_time` must be str or date format, but got {type(iso_time)}"))
+
+
+def datetime_to_str(iso_time: Union[str, datetime], format: str) -> str:
+    """
+    Convert a datetime object to a formatted string, or return the input if it is already a string.
+
+    Args:
+        iso_time (Union[str, datetime]): The input value to convert. If a datetime object, it will be formatted as a string. 
+                                         If already a string, it will be returned as-is.
+        format (str): The format string used to convert the datetime object to a string 
+                      (e.g., "%Y-%m-%d" or "%Y-%m-%dT%H:%M:%S").
+
+    Returns:
+        str: The formatted string representation of the datetime, or the original string if input was a string.
+
+    Raises:
+        ValueError: If `iso_time` is neither a string nor a datetime object.
+    """
+    try:
+        if not isinstance(iso_time, str): 
+            return iso_time.strftime(format)
+        return iso_time
+    except:
+        raise ValueError(colorstr("red", f"`iso_time` must be str or date format, but got {type(iso_time)}"))
+
+
+def generate_random_date(start_date: Union[str, datetime] = '1960-01-01',
+                         end_date: Union[str, datetime] = '2000-12-31') -> str:
+    """
+    Generate a random date string in 'YYYY-MM-DD' format between the given start and end dates.
+
+    Args:
+        start_date (Union[str, datetime]): The start date in 'YYYY-MM-DD' format. Default is '2000-01-01'.
+        end_date (Union[str, datetime]): The end date in 'YYYY-MM-DD' format. Default is '2025-12-31'.
+
+    Returns:
+        str: A randomly generated date string in 'YYYY-MM-DD' format.
+    """
+    start = str_to_datetime(start_date)
+    end = str_to_datetime(end_date)
+    delta = (end - start).days
+    random_days = random.randint(0, delta)
+    random_date = start + timedelta(days=random_days)
+    return datetime_to_str(random_date, '%Y-%m-%d')
+
+
+def exponential_backoff(retry_count: int,
+                        base_delay: int = 5,
+                        max_delay: int = 65,
+                        jitter: bool = True) -> float:
+    """
+    Exponential backoff function for API calling.
+
+    Args:
+        retry_count (int): Retry count.
+        base_delay (int, optional): Base delay seconds. Defaults to 5.
+        max_delay (int, optional): Maximum delay seconds. Defaults to 165.
+        jitter (bool, optional): Whether apply randomness. Defaults to True.
+
+    Returns:
+        float: Final delay time.
+    """
+    delay = min(base_delay * (2 ** retry_count), max_delay)
+    if jitter:
+        delay = random.uniform(delay * 0.8, delay * 1.2)
+    return delay

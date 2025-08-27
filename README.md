@@ -22,6 +22,7 @@ The simulation scenarios also have two visit types:
 &nbsp;
 
 ### Recent updates 📣
+* *August 2025 (v0.1.5)*: Improved the outpatient simulation to be more realistic based on expert feedback.
 * *August 2025 (v0.1.4)*: Added support for outpatient simulation and added exception handling for None-type responses from Gemini.
 * *August 2025 (v0.1.3)*: Added support for emergency department simulation, Azure for GPT, and Vertex AI for the Gemini API.
 * *August 2025 (v0.1.1)*: Added support for a doctor persona in the LLM agent for the emergency department.
@@ -46,7 +47,7 @@ print(patientsim.__version__)
 
 
 ## Overview 📚
-*This repository is the official repository for the PyPI package. For the repository related to the paper and experiments, please refer to [here](https://anonymous.4open.science/r/PatientSim-2691/README.md).*
+*This repository is the official repository for the [PyPI package](https://pypi.org/project/patientsim/).For the repository related to the paper and experiments, please refer to [here](https://github.com/dek924/PatientSim).*
 
 &nbsp;
 
@@ -156,8 +157,10 @@ patient_agent = PatientAgent('gpt-4o',
 > * `recall_level` (str): `no_history` (default), `low`, `high`
 > * `confusion_level` (str): `normal` (default), `moderate`, `high`
 > * `lang_proficiency_level`: `C` (default), `B`, `A` (C means the highest level).
-> * `age` (str): Patient's age. Default: "N/A".
-> * `gender` (str): Patient's gender. Default: "N/A".
+> * `name` (str): Patient's name. Default: "James Lee".
+> * `birth_date` (str): Patient's birth_date. Default: random date between 1960-01-01 and 2000-12-31.
+> * `age` (str): Patient's age. Default: random.randint(20, 80). he value is randomly generated and does not depend on the birth date.
+> * `gender` (str): Patient's gender. Default: random.choice(['male', 'female']).
 > * `race` (str): Patient's race or ethnicity. Default: "N/A".
 > * `tobacco` (str): Patient's tobacco use status (e.g., current, former, never). Default: "N/A".
 > * `alcohol` (str): Patient's alcohol use status (e.g., current, former, never). Default: "N/A".

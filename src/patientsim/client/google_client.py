@@ -1,10 +1,12 @@
 import os
+import time
 from google import genai
 from google.genai import types
 from dotenv import load_dotenv
 from typing import List, Optional
 
 from patientsim.utils import log
+from patientsim.utils.common_utils import exponential_backoff
 
 
 
@@ -100,20 +102,33 @@ class GeminiClient:
             # User prompt
             self.histories += self.__make_payload(user_prompt)
 
-            # System prompt and model response
-            response = self.client.models.generate_content(
-                model=self.model,
-                contents=self.histories,
-                config=types.GenerateContentConfig(
-                    system_instruction=system_prompt,
-                    **kwargs
+            # System prompt and model response, including handling None cases
+            count = 0
+            max_retry = kwargs.get('max_retry', 5)
+            while 1:
+                response = self.client.models.generate_content(
+                    model=self.model,
+                    contents=self.histories,
+                    config=types.GenerateContentConfig(
+                        system_instruction=system_prompt,
+                        **kwargs
+                    )
                 )
-            )
-            
-            if response.text == None:
-                replace_text = 'Could you tell me again?'
-                self.histories.append(types.Content(role='model', parts=[types.Part.from_text(text=replace_text)]))
-                return replace_text
+
+                # After the maximum retries
+                if count >= max_retry:
+                    replace_text = 'Could you tell me again?'
+                    self.histories.append(types.Content(role='model', parts=[types.Part.from_text(text=replace_text)]))
+                    return replace_text
+                
+                # Exponential backoff logic
+                if response.text == None:
+                    wait_time = exponential_backoff(count)
+                    time.sleep(wait_time)
+                    count += 1
+                    continue
+                else:
+                    break
             
             self.histories.append(types.Content(role='model', parts=[types.Part.from_text(text=response.text)]))
             return response.text
