@@ -22,6 +22,7 @@ The simulation scenarios also have two visit types:
 &nbsp;
 
 ### Recent updates 📣
+* *August 2025 (v0.1.5)*: Improved the outpatient simulation to be more realistic based on expert feedback.
 * *August 2025 (v0.1.4)*: Added support for outpatient simulation and added exception handling for None-type responses from Gemini.
 * *August 2025 (v0.1.3)*: Added support for emergency department simulation, Azure for GPT, and Vertex AI for the Gemini API.
 * *August 2025 (v0.1.1)*: Added support for a doctor persona in the LLM agent for the emergency department.
