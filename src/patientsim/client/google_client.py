@@ -36,6 +36,9 @@ class GeminiClient:
     def reset_history(self, verbose: bool = True) -> None:
         """
         Reset the conversation history.
+
+        Args:
+            verbose (bool): Whether to print verbose output. Defaults to True.
         """
         self.__first_turn = True
         self.histories = list()
