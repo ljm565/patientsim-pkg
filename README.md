@@ -16,12 +16,13 @@ The patient persona consists of four elements, resulting in 37 unique combinatio
 * Cognitive Confusion Level: `normal` (default), `moderate`, `high`.
 
 The simulation scenarios also have two visit types:
-* Outpatient `outpatient`
+* Outpatient: `outpatient`
 * Emergency: `emergency_department`
 
 &nbsp;
 
 ### Recent updates 📣
+* *September 2025 (v0.1.6)*: Updated dependencies.
 * *August 2025 (v0.1.5)*: Improved the outpatient simulation to be more realistic based on expert feedback.
 * *August 2025 (v0.1.4)*: Added support for outpatient simulation and added exception handling for None-type responses from Gemini.
 * *August 2025 (v0.1.3)*: Added support for emergency department simulation, Azure for GPT, and Vertex AI for the Gemini API.
