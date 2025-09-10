@@ -104,9 +104,9 @@ class PatientAgent:
         }
 
         if self.visit_type == 'outpatient':
-            assert self.patient_conditions.get('department'), \
+            assert self.patient_conditions.get('department') != 'N/A', \
                 log(colorstr("red", "To simulate outpatient, you should provide a specific department."))
-            assert self.patient_conditions.get('symptom'), \
+            assert self.patient_conditions.get('chiefcomplaint') != 'N/A', \
                 log(colorstr("red", "To simulate outpatient, you should provide at least a simple symptom."))
         
 
