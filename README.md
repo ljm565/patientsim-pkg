@@ -153,38 +153,39 @@ patient_agent = PatientAgent('gpt-4o',
                               ...
                             )
 ```
-> Persona Arguments:
+> Patient Persona Arguments (O: Applicable to outpatient simulation, E: Applicable to emergency department):
 > * `visit_type` (str): `emergency_department` (default), `outpatient`
-> * `personality` (str): `plain` (default), `verbose`, `pleasing`, `impatient`, `distrust`, `overanxious`
-> * `recall_level` (str): `no_history` (default), `low`, `high`
-> * `confusion_level` (str): `normal` (default), `moderate`, `high`
-> * `lang_proficiency_level`: `C` (default), `B`, `A` (C means the highest level).
-> * `name` (str): Patient's name. Default: "James Lee".
-> * `birth_date` (str): Patient's birth_date. Default: random date between 1960-01-01 and 2000-12-31.
-> * `age` (str): Patient's age. Default: random.randint(20, 80). he value is randomly generated and does not depend on the birth date.
-> * `gender` (str): Patient's gender. Default: random.choice(['male', 'female']).
-> * `race` (str): Patient's race or ethnicity. Default: "N/A".
-> * `tobacco` (str): Patient's tobacco use status (e.g., current, former, never). Default: "N/A".
-> * `alcohol` (str): Patient's alcohol use status (e.g., current, former, never). Default: "N/A".
-> * `illicit_drug` (str): Patient's illicit drug use status. Default: "N/A".
-> * `exercise` (str): Patient's physical activity level or exercise habits. Default: "N/A".
-> * `marital_status` (str): Patient's marital status (e.g., single, married, divorced). Default: "N/A".
-> * `children` (str): Number of children or information about dependents. Default: "N/A".
-> * `living_situation` (str): Patient's current living arrangement (e.g., alone, with family). Default: "N/A".
-> * `occupation` (str): Patient's occupation or job information. Default: "N/A".
-> * `insurance` (str): Patient's health insurance status or type. Default: "N/A".
-> * `allergies` (str): Known allergies of the patient (medication, food, environmental). Default: "N/A".
-> * `family_medical_history` (str): Relevant medical history of the patient's family. Default: "N/A".
-> * `medical_device` (str): Any medical devices the patient uses (e.g., pacemaker, insulin pump). Default: "N/A".
-> * `medical_history` (str): Patient's past medical history (conditions, surgeries, hospitalizations). Default: "N/A".
-> * `present_illness_positive` (str): Positive symptoms or findings for the current illness. Default: "N/A".
-> * `present_illness_negative` (str): Negative symptoms or findings for the current illness. Default: "N/A".
-> * `chiefcomplaint` (str): Main reason the patient seeks medical attention. Default: "N/A".
-> * `pain` (str): Description or severity of pain, if any. Default: "N/A".
-> * `medication` (str): Current medications the patient is taking. Default: "N/A".
-> * `arrival_transport` (str): How the patient arrived at the facility (e.g., ambulance, private vehicle). Default: "N/A".
-> * `disposition` (str): Planned disposition after evaluation (e.g., discharge, admission). Default: "N/A".
-> * `diagnosis` (str): Diagnosed condition(s) for the patient. Default: "N/A".
+> * `personality` (str, OE): `plain` (default), `verbose`, `pleasing`, `impatient`, `distrust`, `overanxious`
+> * `recall_level` (str, OE): `no_history` (default), `low`, `high`
+> * `confusion_level` (str, OE): `normal` (default), `moderate`, `high`
+> * `lang_proficiency_level` (str, OE): `C` (default), `B`, `A` (C means the highest level).
+> * `name` (str, O): Patient's name. Default: "James Lee".
+> * `birth_date` (str, O): Patient's birth_date. Default: random date between 1960-01-01 and 2000-12-31.
+> * `age` (str, E): Patient's age. Default: random.randint(20, 80). he value is randomly generated and does not depend on the birth date.
+> * `gender` (str, OE): Patient's gender. Default: random.choice(['male', 'female']).
+> * `race` (str, E): Patient's race or ethnicity. Default: "N/A".
+> * `tobacco` (str, E): Patient's tobacco use status (e.g., current, former, never). Default: "N/A".
+> * `alcohol` (str, E): Patient's alcohol use status (e.g., current, former, never). Default: "N/A".
+> * `illicit_drug` (str, E): Patient's illicit drug use status. Default: "N/A".
+> * `exercise` (str, E): Patient's physical activity level or exercise habits. Default: "N/A".
+> * `marital_status` (str, E): Patient's marital status (e.g., single, married, divorced). Default: "N/A".
+> * `children` (str, E): Number of children or information about dependents. Default: "N/A".
+> * `living_situation` (str, E): Patient's current living arrangement (e.g., alone, with family). Default: "N/A".
+> * `occupation` (str, E): Patient's occupation or job information. Default: "N/A".
+> * `insurance` (str, E): Patient's health insurance status or type. Default: "N/A".
+> * `allergies` (str, OE): Known allergies of the patient (medication, food, environmental). Default: "N/A".
+> * `family_medical_history` (str, OE): Relevant medical history of the patient's family. Default: "N/A".
+> * `medical_device` (str, E): Any medical devices the patient uses (e.g., pacemaker, insulin pump). Default: "N/A".
+> * `medical_history` (str, OE): Patient's past medical history (conditions, surgeries, hospitalizations). Default: "N/A".
+> * `present_illness_positive` (str, E): Positive symptoms or findings for the current illness. Default: "N/A".
+> * `present_illness_negative` (str, E): Negative symptoms or findings for the current illness. Default: "N/A".
+> * `chiefcomplaint` (str, OE): Main reason the patient seeks medical attention. Default: "N/A".
+> * `pain` (str, E): Description or severity of pain, if any. Default: "N/A".
+> * `medication` (str, E): Current medications the patient is taking. Default: "N/A".
+> * `arrival_transport` (str, E): How the patient arrived at the facility (e.g., ambulance, private vehicle). Default: "N/A".
+> * `disposition` (str, E): Planned disposition after evaluation (e.g., discharge, admission). Default: "N/A".
+> * `diagnosis` (str, OE): Diagnosed condition(s) for the patient. Default: "N/A".
+> * `department` (str, O): Hospital department related to the patient’s chiefcomplaint or diagnosis. Default: "N/A".
 
 &nbsp;
 
@@ -196,15 +197,36 @@ doctor_agent = DoctorAgent('gpt-4o', use_azure=False)
 doctor_agent = DoctorAgent('gemini-2.5-flash', use_vertex=False)
 print(doctor_agent.system_prompt)
 ```
+> Doctor Agent Arguments (O: Applicable to outpatient simulation, E: Applicable to emergency department):
+> * `top_k_diagnosis` (int, E): Number of diagnoses to predict. Default: 5.
+> * `age` (str, E): Patient persona's age. Default: random.randint(20, 80). he value is randomly generated and does not depend on the birth date.
+> * `gender` (str, E): Patient persona's gender. Default: random.choice(['male', 'female']).
+> * `arrival_transport` (str, E): Patient persona's arrival transport (e.g., ambulance, private vehicle). Default: "N/A".
 
 &nbsp;
 
-### Run Emergency Department Simulation
+#### Administraion Office Agent
 ```python
-from patientsim.environment import EDSimulation
+from patientsim import AdminStaffAgent
 
+admin_staff_agent = AdminStaffAgent('gpt-4o', department_list=['gastroenterology', 'cardiology'], use_azure=False)
+admin_staff_agent = AdminStaffAgent('gemini-2.5-flash', department_list=['gastroenterology', 'cardiology'], use_vertex=False)
+print(admin_staff_agent.system_prompt)
+```
+
+&nbsp;
+
+### Run Simulation
+```python
+from patientsim.environment import OPSimulation, EDSimulation
+
+# Emergency department
 simulation_env = EDSimulation(patient_agent, doctor_agent)
-simulation_env.simulate()
+dialogs = simulation_env.simulate()
+
+# Outpatient
+simulation_env = OPSimulation(patient_agent, admin_staff_agent)
+dialogs = simulation_env.simulate()
 
 # Example response:
 # Example response:
