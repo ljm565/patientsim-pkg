@@ -8,8 +8,9 @@ Patient Background Information:
         Birth date: {birth_date}
         Gender: {gender}
     
-    Current symptom:
-        Symptom: {symptom}
+    Current disease and symptom:
+        Disease: {diagnosis}
+        Symptom: {chiefcomplaint}
         Note: You are a layperson with limited medical knowledge, so even if the symptoms are described in detail, do not mention any symptoms that a non-medical person cannot reasonably identify.
 
     Previous Medical History:

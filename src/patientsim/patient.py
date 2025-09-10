@@ -100,8 +100,7 @@ class PatientAgent:
             'arrival_transport': kwargs.get('arrival_transport', 'N/A'),
             'disposition': kwargs.get('disposition', 'N/A'),
             'diagnosis': kwargs.get('diagnosis', 'N/A'),
-            'department': kwargs.get('department', None),
-            'symptom': kwargs.get('symptom', None),
+            'department': kwargs.get('department', 'N/A'),
         }
 
         if self.visit_type == 'outpatient':
@@ -160,7 +159,7 @@ class PatientAgent:
         # Initialilze with the default system prompt
         if not system_prompt_path:
             if visit_type == 'outpatient':
-                prompt_file_name = "op_patient_sys.txt"     # TODO: Make outpatient system prompt
+                prompt_file_name = "op_patient_sys.txt"
             else:
                 prompt_file_name = "ed_uti_patient_sys.txt" if self.patient_conditions.get('diagnosis').lower() == 'urinary tract infection' else "ed_patient_sys.txt"
             file_path = resources.files("patientsim.assets.prompt").joinpath(prompt_file_name)
