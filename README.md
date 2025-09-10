@@ -161,7 +161,7 @@ patient_agent = PatientAgent('gpt-4o',
 > * `lang_proficiency_level` (str, OE): `C` (default), `B`, `A` (C means the highest level).
 > * `name` (str, O): Patient's name. Default: "James Lee".
 > * `birth_date` (str, O): Patient's birth_date. Default: random date between 1960-01-01 and 2000-12-31.
-> * `age` (str, E): Patient's age. Default: random.randint(20, 80). he value is randomly generated and does not depend on the birth date.
+> * `age` (str, E): Patient's age. Default: random.randint(20, 80). The value is randomly generated and does not depend on the birth date.
 > * `gender` (str, OE): Patient's gender. Default: random.choice(['male', 'female']).
 > * `race` (str, E): Patient's race or ethnicity. Default: "N/A".
 > * `tobacco` (str, E): Patient's tobacco use status (e.g., current, former, never). Default: "N/A".
@@ -199,8 +199,8 @@ print(doctor_agent.system_prompt)
 ```
 > Doctor Agent Arguments (O: Applicable to outpatient simulation, E: Applicable to emergency department):
 > * `top_k_diagnosis` (int, E): Number of diagnoses to predict. Default: 5.
-> * `age` (str, E): Patient persona's age. Default: random.randint(20, 80). he value is randomly generated and does not depend on the birth date.
-> * `gender` (str, E): Patient persona's gender. Default: random.choice(['male', 'female']).
+> * `age` (str, E): Patient persona's age. Default: "N/A". he value is randomly generated and does not depend on the birth date.
+> * `gender` (str, E): Patient persona's gender. Default: "N/A".
 > * `arrival_transport` (str, E): Patient persona's arrival transport (e.g., ambulance, private vehicle). Default: "N/A".
 
 &nbsp;
