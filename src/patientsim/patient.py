@@ -107,7 +107,7 @@ class PatientAgent:
             assert self.patient_conditions.get('department') != 'N/A', \
                 log(colorstr("red", "To simulate outpatient, you should provide a specific department."))
             assert self.patient_conditions.get('chiefcomplaint') != 'N/A', \
-                log(colorstr("red", "To simulate outpatient, you should provide at least a simple symptom."))
+                log(colorstr("red", "To simulate outpatient, you should provide at least a chiefcomplaint."))
         
 
     def _init_model(self,
