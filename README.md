@@ -22,6 +22,7 @@ The simulation scenarios also have two visit types:
 &nbsp;
 
 ### Recent updates 📣
+* *September 2025 (v0.1.8)*: Fixed bugs and updated explanation about the simulation.
 * *September 2025 (v0.1.7)*: Fixed typos of the prompts.
 * *September 2025 (v0.1.6)*: Updated dependencies.
 * *August 2025 (v0.1.5)*: Improved the outpatient simulation to be more realistic based on expert feedback.
