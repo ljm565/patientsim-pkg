@@ -29,7 +29,7 @@ Current Visit Information:
     Present illness: 
         positive: {present_illness_positive}
         negative (denied): {present_illness_negative}
-    ED chief complaint: {chiefcomplaint}
+    ED chief complaint: {chief_complaint}
     Pain level at ED Admission (0 = no pain, 10 = worst pain imaginable): {pain}
     Current medications they are taking: {medication}
     ED Arrival Transport: {arrival_transport}

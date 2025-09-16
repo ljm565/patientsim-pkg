@@ -164,6 +164,9 @@ patient_agent = PatientAgent('gpt-4o',
 > * `birth_date` (str, O): Patient's birth_date. Default: random date between 1960-01-01 and 2000-12-31.
 > * `age` (str, E): Patient's age. Default: random.randint(20, 80). The value is randomly generated and does not depend on the birth date.
 > * `gender` (str, OE): Patient's gender. Default: random.choice(['male', 'female']).
+> * `telecom` (str, O): Patient's phone number. Default: "N/A".
+> * `personal_id` (str, O): Patient's personal identification number. Default: "N/A".
+> * `address` (str, O): Patient's address. Default: "N/A".
 > * `race` (str, E): Patient's race or ethnicity. Default: "N/A".
 > * `tobacco` (str, E): Patient's tobacco use status (e.g., current, former, never). Default: "N/A".
 > * `alcohol` (str, E): Patient's alcohol use status (e.g., current, former, never). Default: "N/A".
@@ -180,13 +183,13 @@ patient_agent = PatientAgent('gpt-4o',
 > * `medical_history` (str, OE): Patient's past medical history (conditions, surgeries, hospitalizations). Default: "N/A".
 > * `present_illness_positive` (str, E): Positive symptoms or findings for the current illness. Default: "N/A".
 > * `present_illness_negative` (str, E): Negative symptoms or findings for the current illness. Default: "N/A".
-> * `chiefcomplaint` (str, OE): Main reason the patient seeks medical attention. Default: "N/A".
+> * `chief_complaint` (str, OE): Main reason the patient seeks medical attention. Default: "N/A".
 > * `pain` (str, E): Description or severity of pain, if any. Default: "N/A".
 > * `medication` (str, E): Current medications the patient is taking. Default: "N/A".
 > * `arrival_transport` (str, E): How the patient arrived at the facility (e.g., ambulance, private vehicle). Default: "N/A".
 > * `disposition` (str, E): Planned disposition after evaluation (e.g., discharge, admission). Default: "N/A".
 > * `diagnosis` (str, OE): Diagnosed condition(s) for the patient. Default: "N/A".
-> * `department` (str, O): Hospital department related to the patient’s chiefcomplaint or diagnosis. Default: "N/A".
+> * `department` (str, O): Hospital department related to the patient’s chief complaint or diagnosis. Default: "N/A".
 
 &nbsp;
 
