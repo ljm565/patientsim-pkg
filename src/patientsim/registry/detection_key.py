@@ -1,6 +1,5 @@
 DDX_DETECT_KEYS = [
     "ddx ready:",
-    "my top five differential diagnoses",
     "my top 5",
     "here are my top",
     "[ddx]",
