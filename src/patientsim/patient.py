@@ -78,6 +78,9 @@ class PatientAgent:
             'birth_date': kwargs.get('birth_date', generate_random_date()),
             'age': kwargs.get('age', str(random.randint(20, 80))),
             'gender': kwargs.get('gender', random.choice(['male', 'female'])),
+            'telecom': kwargs.get('telecom', 'N/A'),
+            'personal_id': kwargs.get('personal_id', 'N/A'),
+            'address': kwargs.get('address', 'N/A'),
             'race': kwargs.get('race', 'N/A'),
             'tobacco': kwargs.get('tobacco', 'N/A'),
             'alcohol': kwargs.get('alcohol', 'N/A'),
@@ -94,7 +97,7 @@ class PatientAgent:
             'medical_history': kwargs.get('medical_history', 'N/A'),
             'present_illness_positive': kwargs.get('present_illness_positive', 'N/A'),
             'present_illness_negative': kwargs.get('present_illness_negative', 'N/A'),
-            'chiefcomplaint': kwargs.get('chiefcomplaint', 'N/A'),
+            'chief_complaint': kwargs.get('chiefcomplaint', 'N/A'),
             'pain': kwargs.get('pain', 'N/A'),
             'medication': kwargs.get('medication', 'N/A'),
             'arrival_transport': kwargs.get('arrival_transport', 'N/A'),
@@ -106,8 +109,8 @@ class PatientAgent:
         if self.visit_type == 'outpatient':
             assert self.patient_conditions.get('department') != 'N/A', \
                 log(colorstr("red", "To simulate outpatient, you should provide a specific department."))
-            assert self.patient_conditions.get('chiefcomplaint') != 'N/A', \
-                log(colorstr("red", "To simulate outpatient, you should provide at least a chiefcomplaint."))
+            assert self.patient_conditions.get('chief_complaint') != 'N/A', \
+                log(colorstr("red", "To simulate outpatient, you should provide at least a chief complaint."))
         
 
     def _init_model(self,
