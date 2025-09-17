@@ -97,7 +97,7 @@ class PatientAgent:
             'medical_history': kwargs.get('medical_history', 'N/A'),
             'present_illness_positive': kwargs.get('present_illness_positive', 'N/A'),
             'present_illness_negative': kwargs.get('present_illness_negative', 'N/A'),
-            'chief_complaint': kwargs.get('chief_complaint', 'N/A'),
+            'chief_complaint': kwargs.get('chiefcomplaint', 'N/A'),
             'pain': kwargs.get('pain', 'N/A'),
             'medication': kwargs.get('medication', 'N/A'),
             'arrival_transport': kwargs.get('arrival_transport', 'N/A'),

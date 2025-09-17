@@ -183,7 +183,7 @@ patient_agent = PatientAgent('gpt-4o',
 > * `medical_history` (str, OE): Patient's past medical history (conditions, surgeries, hospitalizations). Default: "N/A".
 > * `present_illness_positive` (str, E): Positive symptoms or findings for the current illness. Default: "N/A".
 > * `present_illness_negative` (str, E): Negative symptoms or findings for the current illness. Default: "N/A".
-> * `chief_complaint` (str, OE): Main reason the patient seeks medical attention. Default: "N/A".
+> * `chiefcomplaint` (str, OE): Main reason the patient seeks medical attention. Default: "N/A".
 > * `pain` (str, E): Description or severity of pain, if any. Default: "N/A".
 > * `medication` (str, E): Current medications the patient is taking. Default: "N/A".
 > * `arrival_transport` (str, E): How the patient arrived at the facility (e.g., ambulance, private vehicle). Default: "N/A".
