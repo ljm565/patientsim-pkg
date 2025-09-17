@@ -1,0 +1,4 @@
+Your task is to evaluate whether the doctor provides the top k differential diagnoses in the given response. Answer with "Y" or "N" only, without further explanation.
+
+Response: {response}
+Answer [Y/N]:

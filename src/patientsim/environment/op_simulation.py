@@ -1,25 +1,54 @@
+import os
 import time
 
+from typing import Optional
+from importlib import resources
 from patientsim.patient import PatientAgent
 from patientsim.admin_staff import AdminStaffAgent
 from patientsim.utils import log, colorstr
 from patientsim.utils.common_utils import detect_op_termination
-
+from patientsim.client import GeminiClient, GeminiVertexClient, GPTClient, GPTAzureClient
 
 
 class OPSimulation:
     def __init__(self, 
                  patient_agent: PatientAgent,
                  admin_staff_agent: AdminStaffAgent,
-                 max_inferences: int = 5):
-        
+                 max_inferences: int = 5,
+                 enable_llm_termination_check: bool = False,
+                 termination_checker: str = "gemini-2.5-flash",
+                 termination_checker_prompt_path: Optional[str] = None,
+                 api_key: Optional[str] = None,
+                 use_azure: bool = False,
+                 use_vertex: bool = False,
+                 azure_endpoint: Optional[str] = None,
+                 genai_project_id: Optional[str] = None,
+                 genai_project_location: Optional[str] = None,
+                 genai_credential_path: Optional[str] = None,
+                ):
+
         # Initialize simulation parameters
         self.patient_agent = patient_agent
         self.admin_staff_agent = admin_staff_agent
         self.max_inferences = max_inferences
         self.current_inference = 0  # Current inference index
+        self.enable_llm_termination_check = enable_llm_termination_check  # Flag for LLM-based termination detection
+        self.termination_checker = termination_checker
+        if self.enable_llm_termination_check:
+            log("LLM-based termination detection is enabled.", level="warning")
+            self._init_termination_checker(
+                termination_checker,
+                termination_checker_prompt_path,
+                api_key,
+                use_azure,
+                use_vertex,
+                azure_endpoint,
+                genai_project_id,
+                genai_project_location,
+                genai_credential_path,
+            )
         self._sanity_check()
-    
+
 
     def _sanity_check(self):
         """
@@ -37,6 +66,56 @@ class OPSimulation:
             self.admin_staff_agent.max_inferences = self.max_inferences
             self.admin_staff_agent.build_prompt()
 
+    def _init_termination_checker(
+        self,
+        model: str,
+        prompt_path: Optional[str],
+        api_key: Optional[str],
+        use_azure: bool,
+        use_vertex: bool,
+        azure_endpoint: Optional[str],
+        genai_project_id: Optional[str],
+        genai_project_location: Optional[str],
+        genai_credential_path: Optional[str],
+    ):
+        """
+        Initialize the model and API client based on the specified model type.
+
+        Args:
+            model (str): The patient agent model to use.
+            api_key (Optional[str], optional): API key for the model. If not provided, it will be fetched from environment variables.
+                                               Defaults to None.
+            use_azure (bool): Whether to use Azure OpenAI client.
+            use_vertex (bool): Whether to use Google Vertex AI client.
+            azure_endpoint (Optional[str], optional): Azure OpenAI endpoint. Defaults to None.
+            genai_project_id (Optional[str], optional): Google Cloud project ID. Defaults to None.
+            genai_project_location (Optional[str], optional): Google Cloud project location. Defaults to None.
+            genai_credential_path (Optional[str], optional): Path to Google Cloud credentials JSON file. Defaults to None.
+
+        Raises:
+            ValueError: If the specified model is not supported.
+        """
+
+        # Initialize the model and API client
+        if "gemini" in self.termination_checker.lower():
+            self.termination_checker_client = (
+                GeminiVertexClient(model, genai_project_id, genai_project_location, genai_credential_path) if use_vertex else GeminiClient(model, api_key)
+            )
+        elif "gpt" in self.termination_checker.lower():  # TODO: Support o3, o4 models etc.
+            self.termination_checker_client = GPTAzureClient(model, api_key, azure_endpoint) if use_azure else GPTClient(model, api_key)
+        else:
+            raise ValueError(colorstr("red", f"Unsupported model: {self.model}. Supported models are 'gemini' and 'gpt'."))
+
+        # Initialilze with the default system prompt
+        if not prompt_path:
+            file_path = resources.files("patientsim.assets.prompt").joinpath("op_terminate_user.txt")
+            termination_checker_prompt = file_path.read_text()
+        else:
+            if not os.path.exists(prompt_path):
+                raise FileNotFoundError(colorstr("red", f"Prompt file for termination model not found: {prompt_path}"))
+            with open(prompt_path, "r") as f:
+                termination_checker_prompt = f.read()
+        self.termination_checker_prompt = termination_checker_prompt
 
     def simulate(self, verbose: bool = True) -> list[dict]:
         """
@@ -93,9 +172,21 @@ class OPSimulation:
             if detect_op_termination(staff_response):
                 break
 
+            elif self.enable_llm_termination_check:
+                # Prepare the prompt for termination detection
+                termination_prompt = self.termination_checker_prompt.format(response=staff_response)
+
+                # Get the termination model's response
+                termination_checker_response = self.termination_checker_client(user_prompt=termination_prompt, using_multi_turn=False, verbose=False).strip().upper()
+
+                # Check if the response indicates termination
+                if termination_checker_response == "Y":
+                    log("Conversation termination detected by the LLM-based checker.", level="warning")
+                    break
+
             # Prevent API timeouts
             time.sleep(1.0)
-        
+
         log("Simulation completed.", color=True)
 
         return dialog_history
