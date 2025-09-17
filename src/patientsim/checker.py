@@ -30,6 +30,8 @@ class CheckerAgent:
         
         # Initialize model, API client, and other parameters
         self.model = model
+        self.random_seed = kwargs.get('random_seed', None)
+        self.temperature = kwargs.get('temperature', 0.0)   # Use 0.0 during evaluation for deterministic (non-random) responses.
         self._init_model(self.model, api_key, use_azure, use_vertex, azure_endpoint, genai_project_id, genai_project_location, genai_credential_path)
         
         # Initialize prompt
@@ -124,10 +126,11 @@ class CheckerAgent:
             str: The response from the checker agent.
         """
         response = self.client(
-            user_prompt=self.prompt_template.format(response=input),
+            user_prompt=self.prompt_template.format(response=response),
             using_multi_turn=False,
             verbose=False,
-            temperature=0
+            temperature=self.temperature,
+            seed=self.random_seed,
         )
         return response
         
