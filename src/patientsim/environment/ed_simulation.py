@@ -188,7 +188,11 @@ class EDSimulation:
 
             # Prevent API timeouts
             time.sleep(1.0)
-
         log("Simulation completed.", color=True)
 
-        return dialog_history
+        output = {
+            "dialog_history": dialog_history,
+            "patient_token_usage": self.patient_agent.client.token_usages,
+            "doctor_token_usage": self.doctor_agent.client.token_usages,
+        }
+        return output

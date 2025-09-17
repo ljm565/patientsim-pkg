@@ -13,6 +13,7 @@ class GPTClient:
         self.model = model
         self._init_environment(api_key)
         self.histories = list()
+        self.token_usages = dict()
         self.__first_turn = True
 
 
@@ -116,6 +117,12 @@ class GPTClient:
             )
             assistant_msg = response.choices[0].message
             self.histories.append({"role": assistant_msg.role, "content": assistant_msg.content})
+
+            # Logging token usage
+            if response.usage:
+                self.token_usages.setdefault("prompt_tokens", []).append(response.usage.prompt_tokens)
+                self.token_usages.setdefault("completion_tokens", []).append(response.usage.completion_tokens)
+                self.token_usages.setdefault("total_tokens", []).append(response.usage.total_tokens)
 
             return assistant_msg.content
         

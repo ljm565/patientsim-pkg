@@ -49,7 +49,6 @@ class OPSimulation:
             )
         self._sanity_check()
 
-
     def _sanity_check(self):
         """
         Verify and synchronize the maximum number of inference rounds 
@@ -189,4 +188,9 @@ class OPSimulation:
 
         log("Simulation completed.", color=True)
 
-        return dialog_history
+        output = {
+            "dialog_history": dialog_history,
+            "patient_token_usage": self.patient_agent.client.token_usages,
+            "admin_staff_token_usage": self.admin_staff_agent.client.token_usages,
+        }
+        return output
