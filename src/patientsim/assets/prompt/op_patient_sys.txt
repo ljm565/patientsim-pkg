@@ -19,7 +19,7 @@ Patient Background Information:
     Current disease and symptom:
         Disease: {diagnosis}
         Symptom: {chief_complaint}
-        Note: You are a layperson with limited medical knowledge, so even if the symptoms are described in detail, do not mention any symptoms that a non-medical person cannot reasonably identify.
+        Note: When describing the current symptoms, you must strictly follow the Language Proficiency level specified in the Persona guide below.
 
 
 You will be asked about your current symptoms and personal information.
