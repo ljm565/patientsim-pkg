@@ -1,8 +1,6 @@
-import os
 import time
-
 from typing import Optional
-from importlib import resources
+
 from patientsim.patient import PatientAgent
 from patientsim.admin_staff import AdminStaffAgent
 from patientsim.checker import CheckerAgent
@@ -10,13 +8,13 @@ from patientsim.utils import log, colorstr
 from patientsim.utils.common_utils import detect_op_termination
 
 
+
 class OPSimulation:
     def __init__(self, 
                  patient_agent: PatientAgent,
                  admin_staff_agent: AdminStaffAgent,
                  checker_agent: Optional[CheckerAgent] = None,
-                 max_inferences: int = 5
-                ):
+                 max_inferences: int = 5):
 
         # Initialize simulation parameters
         self.patient_agent = patient_agent
@@ -25,6 +23,7 @@ class OPSimulation:
         self.max_inferences = max_inferences
         self.current_inference = 0  # Current inference index
         self._sanity_check()
+
 
     def _sanity_check(self):
         """
@@ -45,6 +44,7 @@ class OPSimulation:
         if self.checker_agent:
             assert self.checker_agent.visit_type == self.patient_agent.visit_type, \
                 log(colorstr("red", f"The visit type between the Checker agent ({self.checker_agent.visit_type}) and the Patient agent ({self.patient_agent.visit_type}) must be the same."))
+
 
     def simulate(self, verbose: bool = True) -> list[dict]:
         """
