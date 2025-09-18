@@ -114,6 +114,7 @@ class CheckerAgent:
         if self.visit_type not in VISIT_TYPE:
             raise ValueError(colorstr("red", f"Invalid visiting type: {self.visit_type}. Supported types: {', '.join(VISIT_TYPE)}"))
 
+
     def __call__(self,
                  response: str) -> str:
         """
