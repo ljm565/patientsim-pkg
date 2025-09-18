@@ -1,33 +1,49 @@
+import os
+import requests
 from openai import OpenAI
 from dotenv import load_dotenv
 from typing import List, Optional
 
-from patientsim.utils import log
+from patientsim.utils import colorstr, log
 
 
 
 class VLLMClient:
-    def __init__(self, model: str, vllm_url: str):
+    def __init__(self, model: str, vllm_port: str):
         # Initialize
+        load_dotenv(override=True)
         self.model = model
-        self.vllm_url = vllm_url
+        self.vllm_port = os.environ.get("VLLM_PORT", None) if not vllm_port else vllm_port
         self._init_environment()
         self.histories = list()
         self.token_usages = dict()
         self.__first_turn = False
+        self.__sanity_check()
 
 
     def _init_environment(self):
         """
         Initialize vLLM OpenAI-formatted client.
         """
-        load_dotenv(override=True)
         self.client = OpenAI(
-            base_url=f'{self.vllm_url}/v1',
+            base_url=f'http://localhost:{self.vllm_port}/v1',
             api_key='EMPTY'
         )
 
-    
+
+    def __sanity_check(self) -> None:
+        response = requests.get(f'http://localhost:{self.vllm_port}/v1/models')
+        if response.status_code != 200:
+            raise ValueError(colorstr("red", f"Failed to retrieve models: {response.text}"))
+        
+        models = response.json()
+        if not models.get("data"):
+            raise ValueError(colorstr("red", "No models found."))
+        available_model_ids = [m['id'] for m in models['data']]
+        if self.model not in available_model_ids:
+            raise ValueError(colorstr("red", f"Model '{self.model}' not found in available models: {', '.join(available_model_ids)}"))
+
+
     def reset_history(self, verbose: bool = True) -> None:
         """
         Reset the conversation history.
