@@ -1,0 +1,4 @@
+Your task is to evaluate whether the staff clearly determines the patient's department in the given response. Only output "Y" if the department is explicitly identified or decided in the response. Otherwise, output "N". Answer with "Y" or "N" only, without further explanation. 
+
+Response: {response}
+Answer [Y/N]:

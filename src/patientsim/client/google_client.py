@@ -16,6 +16,7 @@ class GeminiClient:
         self.model = model
         self._init_environment(api_key)
         self.histories = list()
+        self.token_usages = dict()
         self.__first_turn = True
 
 
@@ -65,7 +66,7 @@ class GeminiClient:
         )
         
         payloads.append(user_content)
-        
+
         return payloads
 
 
@@ -118,12 +119,18 @@ class GeminiClient:
                     )
                 )
 
+                # Logging token usage
+                if response.usage_metadata:
+                    self.token_usages.setdefault("prompt_tokens", []).append(response.usage_metadata.prompt_token_count)
+                    self.token_usages.setdefault("completion_tokens", []).append(response.usage_metadata.candidates_token_count)
+                    self.token_usages.setdefault("total_tokens", []).append(response.usage_metadata.total_token_count)
+
                 # After the maximum retries
                 if count >= max_retry:
                     replace_text = 'Could you tell me again?'
                     self.histories.append(types.Content(role='model', parts=[types.Part.from_text(text=replace_text)]))
                     return replace_text
-                
+
                 # Exponential backoff logic
                 if response.text == None:
                     wait_time = exponential_backoff(count)
@@ -135,6 +142,6 @@ class GeminiClient:
             
             self.histories.append(types.Content(role='model', parts=[types.Part.from_text(text=response.text)]))
             return response.text
-        
+
         except Exception as e:
             raise e

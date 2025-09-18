@@ -1,7 +1,9 @@
 import time
+from typing import Optional
 
 from patientsim.patient import PatientAgent
 from patientsim.admin_staff import AdminStaffAgent
+from patientsim.checker import CheckerAgent
 from patientsim.utils import log, colorstr
 from patientsim.utils.common_utils import detect_op_termination
 
@@ -11,15 +13,17 @@ class OPSimulation:
     def __init__(self, 
                  patient_agent: PatientAgent,
                  admin_staff_agent: AdminStaffAgent,
+                 checker_agent: Optional[CheckerAgent] = None,
                  max_inferences: int = 5):
-        
+
         # Initialize simulation parameters
         self.patient_agent = patient_agent
         self.admin_staff_agent = admin_staff_agent
+        self.checker_agent = checker_agent
         self.max_inferences = max_inferences
         self.current_inference = 0  # Current inference index
         self._sanity_check()
-    
+
 
     def _sanity_check(self):
         """
@@ -36,6 +40,10 @@ class OPSimulation:
                 and the Administration Staff agent system prompt will be updated accordingly.", level="warning")
             self.admin_staff_agent.max_inferences = self.max_inferences
             self.admin_staff_agent.build_prompt()
+
+        if self.checker_agent:
+            assert self.checker_agent.visit_type == self.patient_agent.visit_type, \
+                log(colorstr("red", f"The visit type between the Checker agent ({self.checker_agent.visit_type}) and the Patient agent ({self.patient_agent.visit_type}) must be the same."))
 
 
     def simulate(self, verbose: bool = True) -> list[dict]:
@@ -93,9 +101,23 @@ class OPSimulation:
             if detect_op_termination(staff_response):
                 break
 
+            elif self.checker_agent:
+                # Check if the staff response contains termination cues
+                termination_check = self.checker_agent(response=staff_response).strip().upper()
+
+                # Check if the response indicates termination
+                if termination_check == "Y": 
+                    log("Conversation termination detected by the checker agent.", level="warning")
+                    break
+
             # Prevent API timeouts
             time.sleep(1.0)
-        
+
         log("Simulation completed.", color=True)
 
-        return dialog_history
+        output = {
+            "dialog_history": dialog_history,
+            "patient_token_usage": self.patient_agent.client.token_usages,
+            "admin_staff_token_usage": self.admin_staff_agent.client.token_usages,
+        }
+        return output

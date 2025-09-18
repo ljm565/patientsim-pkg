@@ -1,0 +1,15 @@
+DDX_DETECT_KEYS = [
+    "ddx ready:",
+    "my top 5",
+    "here are my top",
+    "[ddx]",
+    "[ddx",
+    "here are some potential concerns we need to consider",
+    "differential diagnoses",
+    "top 5 likely diagnoses",
+    "[pddx]",
+    "most likely possibilities",
+    "top 5 possibilities",
+    "top 5 likely diagnoses",
+    "top possibilities",
+]

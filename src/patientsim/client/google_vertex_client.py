@@ -21,6 +21,7 @@ class GeminiVertexClient:
         self.model = model
         self._init_environment(project_id, project_location, vertex_credentials)
         self.histories = list()
+        self.token_usages = dict()
         self.__first_turn = True
 
 
@@ -86,9 +87,9 @@ class GeminiVertexClient:
             role='user',
             parts=[types.Part.from_text(text=user_prompt)]
         )
-        
+
         payloads.append(user_content)
-        
+
         return payloads
 
 
@@ -141,12 +142,19 @@ class GeminiVertexClient:
                     )
                 )
 
+                # Logging token usage
+                if response.usage_metadata:
+                    self.token_usages.setdefault("prompt_tokens", []).append(response.usage_metadata.prompt_token_count)
+                    self.token_usages.setdefault("completion_tokens", []).append(response.usage_metadata.candidates_token_count)
+                    self.token_usages.setdefault("total_tokens", []).append(response.usage_metadata.total_token_count)
+
                 # After the maximum retries
                 if count >= max_retry:
                     replace_text = 'Could you tell me again?'
                     self.histories.append(types.Content(role='model', parts=[types.Part.from_text(text=replace_text)]))
                     return replace_text
 
+                # Exponential backoff logic
                 if response.text == None:
                     wait_time = exponential_backoff(count)
                     time.sleep(wait_time)
@@ -157,6 +165,6 @@ class GeminiVertexClient:
             
             self.histories.append(types.Content(role='model', parts=[types.Part.from_text(text=response.text)]))
             return response.text
-        
+
         except Exception as e:
             raise e
