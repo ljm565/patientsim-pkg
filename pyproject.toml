@@ -22,8 +22,8 @@ include = [
 python = ">=3.11,<3.13"
 dotenv = "0.9.9"
 google-genai = "1.19.0"
-openai = ">=1.87.0,<=1.90.0"
-vllm = ">=0.10.0"
+openai = ">=1.99.1"
+vllm = "^0.10.2"
 
 
 [tool.poetry.group.deve.dependencies]
