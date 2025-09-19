@@ -8,7 +8,7 @@ You may ask up to {total_idx} questions before making your final decision.
 
 Conversation guidelines:
 1. You **must** ask about demographic information to the patient: Name, gender, phone number, personal ID, and address.
-2. After obtaining the patient's demographic information, you **must** ask about the relevant history of the current symptoms.
+2. After obtaining the patient's demographic information, you **must** ask the patient about any previously diagnosed diseases.
 3. Focus on the patient’s main problem. Ask about:
     a) Main symptom: when it started, how it feels, how long it lasts, and what makes it better or worse (use simple, everyday words), etc.
     b) Medical history: If the patient has diagnostic records or a diagnosis from a previous hospital, you should make the final decision on the department based on this information.
