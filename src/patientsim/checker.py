@@ -6,7 +6,7 @@ from patientsim.registry.persona import *
 from patientsim.utils import colorstr, log
 from patientsim.utils.desc_utils import *
 from patientsim.utils.common_utils import *
-from patientsim.client import GeminiClient, GeminiVertexClient, GPTClient, GPTAzureClient
+from patientsim.client import GeminiClient, GeminiVertexClient, GPTClient, GPTAzureClient, VLLMClient
 
 
 
@@ -17,10 +17,12 @@ class CheckerAgent:
                  api_key: Optional[str] = None,
                  use_azure: bool = False,
                  use_vertex: bool = False,
+                 use_vllm: bool = False,
                  azure_endpoint: Optional[str] = None,
                  genai_project_id: Optional[str] = None,
                  genai_project_location: Optional[str] = None,
                  genai_credential_path: Optional[str] = None,
+                 vllm_path: Optional[str] = None,
                  system_prompt_path: Optional[str] = None,
                  **kwargs) -> None:
         
@@ -32,7 +34,18 @@ class CheckerAgent:
         self.model = model
         self.random_seed = kwargs.get('random_seed', None)
         self.temperature = kwargs.get('temperature', 0.0)   # Use 0.0 during evaluation for deterministic (non-random) responses.
-        self._init_model(self.model, api_key, use_azure, use_vertex, azure_endpoint, genai_project_id, genai_project_location, genai_credential_path)
+        self._init_model(
+            model=self.model,
+            api_key=api_key,
+            use_azure=use_azure,
+            use_vertex=use_vertex,
+            use_vllm=use_vllm,
+            azure_endpoint=azure_endpoint,
+            genai_project_id=genai_project_id,
+            genai_project_location=genai_project_location,
+            genai_credential_path=genai_credential_path,
+            vllm_path=vllm_path
+        )
         
         # Initialize prompt
         self.prompt_template = self._init_prompt(self.visit_type, system_prompt_path)
@@ -45,10 +58,12 @@ class CheckerAgent:
                     api_key: Optional[str] = None,
                     use_azure: bool = False,
                     use_vertex: bool = False,
+                    use_vllm: bool = False,
                     azure_endpoint: Optional[str] = None,
                     genai_project_id: Optional[str] = None,
                     genai_project_location: Optional[str] = None,
-                    genai_credential_path: Optional[str] = None) -> None:
+                    genai_credential_path: Optional[str] = None,
+                    vllm_path: Optional[str] = None) -> None:
         """
         Initialize the model and API client based on the specified model type.
 
@@ -58,10 +73,12 @@ class CheckerAgent:
                                                Defaults to None.
             use_azure (bool): Whether to use Azure OpenAI client.
             use_vertex (bool): Whether to use Google Vertex AI client.
+            use_vllm (bool): Whether to use vLLM client.
             azure_endpoint (Optional[str], optional): Azure OpenAI endpoint. Defaults to None.
             genai_project_id (Optional[str], optional): Google Cloud project ID. Defaults to None.
             genai_project_location (Optional[str], optional): Google Cloud project location. Defaults to None.
             genai_credential_path (Optional[str], optional): Path to Google Cloud credentials JSON file. Defaults to None.
+            vllm_path (Optional[str], optional): Path to the vLLM server. Defaults to None.
 
         Raises:
             ValueError: If the specified model is not supported.
@@ -70,6 +87,8 @@ class CheckerAgent:
             self.client = GeminiVertexClient(model, genai_project_id, genai_project_location, genai_credential_path) if use_vertex else GeminiClient(model, api_key)
         elif 'gpt' in self.model.lower():       # TODO: Support o3, o4 models etc.
             self.client = GPTAzureClient(model, api_key, azure_endpoint) if use_azure else GPTClient(model, api_key)
+        elif use_vllm:
+            self.client = VLLMClient(model, vllm_path)
         else:
             raise ValueError(colorstr("red", f"Unsupported model: {self.model}. Supported models are 'gemini' and 'gpt'."))
         
