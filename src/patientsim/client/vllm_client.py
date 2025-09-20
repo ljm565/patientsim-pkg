@@ -25,13 +25,13 @@ class VLLMClient:
         Initialize vLLM OpenAI-formatted client.
         """
         self.client = OpenAI(
-            base_url=self.vllm_endpoint,
+            base_url=f"{self.vllm_endpoint}/v1",
             api_key='EMPTY'
         )
 
 
     def __sanity_check(self) -> None:
-        response = requests.get(f'{self.vllm_endpoint}/models')
+        response = requests.get(f'{self.vllm_endpoint}/v1/models')
         if response.status_code != 200:
             raise ValueError(colorstr("red", f"Failed to retrieve models: {response.text}"))
         
