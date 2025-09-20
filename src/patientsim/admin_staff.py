@@ -23,7 +23,7 @@ class AdminStaffAgent:
                  genai_project_id: Optional[str] = None,
                  genai_project_location: Optional[str] = None,
                  genai_credential_path: Optional[str] = None,
-                 vllm_path: Optional[str] = None,
+                 vllm_endpoint: Optional[str] = None,
                  system_prompt_path: Optional[str] = None,
                  **kwargs) -> None:
         
@@ -45,7 +45,7 @@ class AdminStaffAgent:
             genai_project_id=genai_project_id,
             genai_project_location=genai_project_location,
             genai_credential_path=genai_credential_path,
-            vllm_path=vllm_path
+            vllm_endpoint=vllm_endpoint
         )
         
         # Initialize prompt
@@ -78,7 +78,7 @@ class AdminStaffAgent:
                     genai_project_id: Optional[str] = None,
                     genai_project_location: Optional[str] = None,
                     genai_credential_path: Optional[str] = None,
-                    vllm_path: Optional[str] = None) -> None:
+                    vllm_endpoint: Optional[str] = None) -> None:
         """
         Initialize the model and API client based on the specified model type.
 
@@ -93,7 +93,7 @@ class AdminStaffAgent:
             genai_project_id (Optional[str], optional): Google Cloud project ID. Defaults to None.
             genai_project_location (Optional[str], optional): Google Cloud project location. Defaults to None.
             genai_credential_path (Optional[str], optional): Path to Google Cloud credentials JSON file. Defaults to None.
-            vllm_path (Optional[str], optional): Path to the vLLM server. Defaults to None.
+            vllm_endpoint (Optional[str], optional): Path to the vLLM server. Defaults to None.
 
         Raises:
             ValueError: If the specified model is not supported.
@@ -103,7 +103,7 @@ class AdminStaffAgent:
         elif 'gpt' in self.model.lower():       # TODO: Support o3, o4 models etc.
             self.client = GPTAzureClient(model, api_key, azure_endpoint) if use_azure else GPTClient(model, api_key)
         elif use_vllm:
-            self.client = VLLMClient(model, vllm_path)
+            self.client = VLLMClient(model, vllm_endpoint)
         else:
             raise ValueError(colorstr("red", f"Unsupported model: {self.model}. Supported models are 'gemini' and 'gpt'."))
         

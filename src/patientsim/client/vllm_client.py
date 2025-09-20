@@ -9,10 +9,10 @@ from patientsim.utils import colorstr, log
 
 
 class VLLMClient:
-    def __init__(self, model: str, vllm_path: str):
+    def __init__(self, model: str, vllm_endpoint: str):
         # Initialize
         self.model = model
-        self.vllm_path = vllm_path
+        self.vllm_endpoint = vllm_endpoint
         self._init_environment()
         self.histories = list()
         self.token_usages = dict()
@@ -25,13 +25,13 @@ class VLLMClient:
         Initialize vLLM OpenAI-formatted client.
         """
         self.client = OpenAI(
-            base_url=self.vllm_path,
+            base_url=self.vllm_endpoint,
             api_key='EMPTY'
         )
 
 
     def __sanity_check(self) -> None:
-        response = requests.get(f'{self.vllm_path}/models')
+        response = requests.get(f'{self.vllm_endpoint}/models')
         if response.status_code != 200:
             raise ValueError(colorstr("red", f"Failed to retrieve models: {response.text}"))
         
