@@ -1,7 +1,5 @@
-import os
 import requests
 from openai import OpenAI
-from dotenv import load_dotenv
 from typing import List, Optional
 
 from patientsim.utils import colorstr, log
