@@ -14,7 +14,7 @@ class VLLMClient:
         self._init_environment()
         self.histories = list()
         self.token_usages = dict()
-        self.__first_turn = False
+        self.__first_turn = True
         self.__sanity_check()
 
 
