@@ -23,7 +23,7 @@ class CheckerAgent:
                  genai_project_location: Optional[str] = None,
                  genai_credential_path: Optional[str] = None,
                  vllm_endpoint: Optional[str] = None,
-                 system_prompt_path: Optional[str] = None,
+                 user_prompt_path: Optional[str] = None,
                  **kwargs) -> None:
         
         # Initialize attributes
@@ -48,7 +48,7 @@ class CheckerAgent:
         )
         
         # Initialize prompt
-        self.prompt_template = self._init_prompt(self.visit_type, system_prompt_path)
+        self.prompt_template = self._init_prompt(self.visit_type, user_prompt_path)
         
         log("CheckerAgent initialized successfully", color=True)
     
@@ -93,34 +93,34 @@ class CheckerAgent:
             raise ValueError(colorstr("red", f"Unsupported model: {self.model}. Supported models are 'gemini' and 'gpt'."))
         
 
-    def _init_prompt(self, visit_type: str, system_prompt_path: Optional[str] = None) -> str:
+    def _init_prompt(self, visit_type: str, user_prompt_path: Optional[str] = None) -> str:
         """
-        Initialize the system prompt for the checker agent.
+        Initialize the user prompt for the checker agent.
 
         Args:
             visit_type (str): Type of visit, either 'outpatient' or 'emergency_department'.
-            system_prompt_path (Optional[str], optional): Path to a custom system prompt file. 
-                                                          If not provided, the default system prompt will be used. Defaults to None.
+            user_prompt_path (Optional[str], optional): Path to a custom user prompt file. 
+                                                          If not provided, the default user prompt will be used. Defaults to None.
 
         Raises:
-            FileNotFoundError: If the specified system prompt file does not exist.
+            FileNotFoundError: If the specified user prompt file does not exist.
         """
-        # Initialilze with the default system prompt
-        if not system_prompt_path:
+        # Initialilze with the default user prompt
+        if not user_prompt_path:
             if visit_type == 'outpatient':
                 prompt_file_name = "op_terminate_user.txt"
             else:
                 prompt_file_name = "ed_terminate_user.txt"
             file_path = resources.files("patientsim.assets.prompt").joinpath(prompt_file_name)
-            system_prompt = file_path.read_text()
+            user_prompt = file_path.read_text()
         
-        # User can specify a custom system prompt
+        # User can specify a custom user prompt
         else:
-            if not os.path.exists(system_prompt_path):
-                raise FileNotFoundError(colorstr("red", f"System prompt file not found: {system_prompt_path}"))
-            with open(system_prompt_path, 'r') as f:
-                system_prompt = f.read()
-        return system_prompt
+            if not os.path.exists(user_prompt_path):
+                raise FileNotFoundError(colorstr("red", f"User prompt file not found: {user_prompt_path}"))
+            with open(user_prompt_path, 'r') as f:
+                user_prompt = f.read()
+        return user_prompt
 
 
     def __sanity_check(self) -> None:
