@@ -40,15 +40,25 @@ class GeminiVertexClient:
             vertex_credentials (Optional[str]): Path to the Google Cloud credentials file. If not provided,
                                                it will be loaded from environment variables.
         """
-        os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = os.environ.get("GOOGLE_APPLICATION_CREDENTIALS", None) if vertex_credentials is None else vertex_credentials
-        if not project_id or not project_location:
+        if not vertex_credentials:
+            load_dotenv(override=True)
+            vertex_credentials = os.environ.get("GOOGLE_APPLICATION_CREDENTIALS", None)
+            assert vertex_credentials is not None, "GOOGLE_APPLICATION_CREDENTIALS is not set in .env or passed explicitly."
+        else:
+            os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = vertex_credentials
+
+        if not project_id:
             load_dotenv(override=True)
             project_id = os.environ.get("GOOGLE_PROJECT_ID", None) if not project_id else project_id
+        
+        if not project_location:
+            load_dotenv(override=True)
             project_location = (
                 os.environ.get("GOOGLE_PROJECT_LOCATION", None)
                 if not project_location
                 else project_location
             )
+        
         self.client = genai.Client(
             vertexai=True,
             project=project_id,
@@ -66,6 +76,7 @@ class GeminiVertexClient:
         """
         self.__first_turn = True
         self.histories = list()
+        self.token_usages = dict()
         if verbose:
             log('Conversation history has been reset.', color=True)
 
