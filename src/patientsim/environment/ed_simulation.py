@@ -46,6 +46,14 @@ class EDSimulation:
                 log(colorstr("red", f"The visit type between the Checker agent ({self.checker_agent.visit_type}) and the Patient agent ({self.patient_agent.visit_type}) must be the same."))
 
 
+    def _init_agents(self, verbose: bool = True) -> None:
+        """
+        Reset the conversation histories and token usage records of both the Patient and Doctor agents.
+        """
+        self.patient_agent.client.reset_history(verbose=verbose)
+        self.doctor_agent.client.reset_history(verbose=verbose)
+
+
     def simulate(self, verbose: bool = True) -> list[dict]:
         """
         Run a full conversation simulation between the Doctor and Patient agents
@@ -64,6 +72,9 @@ class EDSimulation:
                 - "role" (str): "Doctor" or "Patient"
                 - "content" (str): Text content of the dialogue turn
         """
+        # Initialize agents
+        self._init_agents(verbose=verbose)
+        
         if verbose:
             log(f"Patient prompt:\n{self.patient_agent.system_prompt}")
             log(f"Doctor prompt:\n{self.doctor_agent.system_prompt}")
