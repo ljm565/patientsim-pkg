@@ -98,6 +98,7 @@ class PatientAgent:
             'tobacco': kwargs.get('tobacco', 'N/A'),
             'alcohol': kwargs.get('alcohol', 'N/A'),
             'illicit_drug': kwargs.get('illicit_drug', 'N/A'),
+            'sexual_history': kwargs.get('sexual_history', 'N/A'),
             'exercise': kwargs.get('exercise', 'N/A'),
             'marital_status': kwargs.get('marital_status', 'N/A'),
             'children': kwargs.get('children', 'N/A'),

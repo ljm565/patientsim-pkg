@@ -124,6 +124,16 @@ patient_agent = PatientAgent('gemini-2.5-flash',
                               api_key=GOOGLE_API_KEY,
                               use_vertex=False # Set True for use Vertex AI
                             )
+                            
+# Patient Agent (vLLM)
+patient_agent = PatientAgent('meta-llama/Llama-3.3-70B-Instruct', 
+                              visit_type='emergency_department',
+                              random_seed=42,
+                              random_sampling=False,
+                              temperature=0,
+                              use_vllm=True, # Set True for use vLLM API
+                              vllm_endpoint=VLLM_ENDPOINT # Pass the vLLM server endpoint (e.g. http://localhost:PORT)
+                            )
 
 response = patient_agent(
     user_prompt="How can I help you?",
@@ -199,6 +209,7 @@ from patientsim import DoctorAgent
 
 doctor_agent = DoctorAgent('gpt-4o', use_azure=False)
 doctor_agent = DoctorAgent('gemini-2.5-flash', use_vertex=False)
+doctor_agent = DoctorAgent('meta-llama/Llama-3.3-70B-Instruct', use_vllm=True, vllm_endpoint="http://localhost:8000")
 print(doctor_agent.system_prompt)
 ```
 > Doctor Agent Arguments (O: Applicable to outpatient simulation, E: Applicable to emergency department):
@@ -215,9 +226,26 @@ from patientsim import AdminStaffAgent
 
 admin_staff_agent = AdminStaffAgent('gpt-4o', department_list=['gastroenterology', 'cardiology'], use_azure=False)
 admin_staff_agent = AdminStaffAgent('gemini-2.5-flash', department_list=['gastroenterology', 'cardiology'], use_vertex=False)
+admin_staff_agent = AdminStaffAgent('meta-llama/Llama-3.3-70B-Instruct', 
+                                    department_list=['gastroenterology', 'cardiology'], 
+                                    use_vllm=True, 
+                                    vllm_endpoint="http://localhost:8000"
+                                  )
 print(admin_staff_agent.system_prompt)
 ```
+&nbsp;
 
+#### Dialog Termination Checker Agent
+The CheckerAgent is used to double-check if the dialog should be terminated, especially in edge cases where rule-based logic might fail. \
+Using CheckerAgent is useful for improving safety and consistency in conversations, but involves an additional LLM call, which may increase both latency and cost per interaction. 
+```python
+from patientsim import CheckerAgent
+
+checker_agent = CheckerAgent('gpt-4o', visit_type='emergency_department', use_azure=False)
+checker_agent = CheckerAgent('gemini-2.5-flash', visit_type='emergency_department', use_vertex=False)
+checker_agent = CheckerAgent('meta-llama/Llama-3.3-70B-Instruct', visit_type='emergency_department', vllm_endpoint="http://localhost:8000")
+print(checker_agent.prompt_template)
+```
 &nbsp;
 
 ### Run Simulation
@@ -228,8 +256,16 @@ from patientsim.environment import OPSimulation, EDSimulation
 simulation_env = EDSimulation(patient_agent, doctor_agent)
 dialogs = simulation_env.simulate()
 
+# Emergency department with checker agent
+simulation_env = EDSimulation(patient_agent, doctor_agent, checker_agent)
+dialogs = simulation_env.simulate()
+
 # Outpatient
 simulation_env = OPSimulation(patient_agent, admin_staff_agent)
+dialogs = simulation_env.simulate()
+
+# Outpatient with checker agent
+simulation_env = OPSimulation(patient_agent, admin_staff_agent, checker_agent)
 dialogs = simulation_env.simulate()
 
 # Example response:

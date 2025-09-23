@@ -50,6 +50,7 @@ class VLLMClient:
         """
         self.__first_turn = True
         self.histories = list()
+        self.token_usages = dict()
         if verbose:
             log('Conversation history has been reset.', color=True)
 
