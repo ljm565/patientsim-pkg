@@ -187,7 +187,7 @@ patient_agent = PatientAgent('gpt-4o',
 > * `tobacco` (str, E): Patient's tobacco use status (e.g., current, former, never). Default: "N/A".
 > * `alcohol` (str, E): Patient's alcohol use status (e.g., current, former, never). Default: "N/A".
 > * `illicit_drug` (str, E): Patient's illicit drug use status. Default: "N/A".
-> * `'sexual_history'` (str, E): Patient's sexual history. Default: "N/A".
+> * `sexual_history` (str, E): Patient's sexual history. Default: "N/A".
 > * `exercise` (str, E): Patient's physical activity level or exercise habits. Default: "N/A".
 > * `marital_status` (str, E): Patient's marital status (e.g., single, married, divorced). Default: "N/A".
 > * `children` (str, E): Number of children or information about dependents. Default: "N/A".
