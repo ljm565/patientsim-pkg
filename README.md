@@ -22,6 +22,12 @@ The simulation scenarios also have two visit types:
 &nbsp;
 
 ### Recent updates 📣
+* *September 2025 (v0.2.0)*: We have supported vLLM local model for the patient simulation.
+  * Minor improvements:
+    - Fixed simulation bugs
+    - Enhanced simulation process
+    - Added checker LLM support for proper simulation termination
+
 * *September 2025 (v0.1.8)*: Fixed bugs and updated explanation about the simulation.
 * *September 2025 (v0.1.7)*: Fixed typos of the prompts.
 * *September 2025 (v0.1.6)*: Updated dependencies.
@@ -181,6 +187,7 @@ patient_agent = PatientAgent('gpt-4o',
 > * `tobacco` (str, E): Patient's tobacco use status (e.g., current, former, never). Default: "N/A".
 > * `alcohol` (str, E): Patient's alcohol use status (e.g., current, former, never). Default: "N/A".
 > * `illicit_drug` (str, E): Patient's illicit drug use status. Default: "N/A".
+> * `'sexual_history'` (str, E): Patient's sexual history. Default: "N/A".
 > * `exercise` (str, E): Patient's physical activity level or exercise habits. Default: "N/A".
 > * `marital_status` (str, E): Patient's marital status (e.g., single, married, divorced). Default: "N/A".
 > * `children` (str, E): Number of children or information about dependents. Default: "N/A".
