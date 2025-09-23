@@ -49,6 +49,9 @@ class OPSimulation:
     def _init_agents(self, verbose: bool = True) -> None:
         """
         Reset the conversation histories and token usage records of both the Patient and Doctor agents.
+
+        Args:
+            verbose (bool, optional): Whether to print verbose output. Defaults to True.
         """
         self.patient_agent.client.reset_history(verbose=verbose)
         self.admin_staff_agent.client.reset_history(verbose=verbose)
