@@ -57,7 +57,7 @@ class EDSimulation:
         self.doctor_agent.client.reset_history(verbose=verbose)
 
 
-    def simulate(self, verbose: bool = True) -> list[dict]:
+    def simulate(self, verbose: bool = True, **kwargs) -> list[dict]:
         """
         Run a full conversation simulation between the Doctor and Patient agents
         in the emergency department setting.
@@ -95,7 +95,8 @@ class EDSimulation:
             patient_response = self.patient_agent(
                 user_prompt=dialog_history[-1]["content"],
                 using_multi_turn=True,
-                verbose=verbose
+                verbose=verbose,
+                **kwargs
             )
             dialog_history.append({"role": "Patient", "content": patient_response})
             role = f"{colorstr('green', 'Patient')} [{progress}%]"
@@ -106,7 +107,8 @@ class EDSimulation:
                 user_prompt=dialog_history[-1]["content"] + "\nThis is the final turn. Now, you must provide your top5 differential diagnosis." \
                     if inference_idx == self.max_inferences - 1 else dialog_history[-1]["content"],
                 using_multi_turn=True,
-                verbose=verbose
+                verbose=verbose,
+                **kwargs
             )
             dialog_history.append({"role": "Doctor", "content": doctor_response})
             role = f"{colorstr('blue', 'Doctor')}  [{progress}%]"
