@@ -124,6 +124,7 @@ class GPTClient:
                 self.token_usages.setdefault("prompt_tokens", []).append(response.usage.prompt_tokens)
                 self.token_usages.setdefault("completion_tokens", []).append(response.usage.completion_tokens)
                 self.token_usages.setdefault("total_tokens", []).append(response.usage.total_tokens)
+                self.token_usages.setdefault("reasoning_tokens", []).append(response.usage.completion_tokens_details.reasoning_tokens)
 
             return assistant_msg.content
         
