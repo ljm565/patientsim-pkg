@@ -264,12 +264,26 @@ from patientsim.environment import OPSimulation, EDSimulation
 simulation_env = EDSimulation(patient_agent, doctor_agent)
 dialogs = simulation_env.simulate()
 
+# Emergency department with additional kwargs
+# NOTE: You can also set other generation parameters beyond temperature and seed
+patient_kwargs = {"reasoning_effort": "low"}
+doctor_kwargs = {"reasoning_effort": "medium"}    
+simulation_env = EDSimulation(patient_agent, doctor_agent, patient_kwargs, doctor_kwargs)
+dialogs = simulation_env.simulate()
+
 # Emergency department with checker agent
 simulation_env = EDSimulation(patient_agent, doctor_agent, checker_agent)
 dialogs = simulation_env.simulate()
 
 # Outpatient
 simulation_env = OPSimulation(patient_agent, admin_staff_agent)
+dialogs = simulation_env.simulate()
+
+# Outpatient with additional kwargs
+# NOTE: You can also set other generation parameters beyond temperature and seed
+patient_kwargs = {"reasoning_effort": "low"}
+staff_kwargs = {"reasoning_effort": "medium"}    
+simulation_env = OPSimulation(patient_agent, admin_staff_agent, patient_kwargs, staff_kwargs)
 dialogs = simulation_env.simulate()
 
 # Outpatient with checker agent
