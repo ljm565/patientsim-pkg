@@ -22,12 +22,13 @@ The simulation scenarios also have two visit types:
 &nbsp;
 
 ### Recent updates 📣
-* *September 2025 (v0.2.0)*: We have supported vLLM local model for the patient simulation.
+* *October 2025 (v0.2.1)*: We have improved several things.
   * Minor improvements:
-    - Fixed simulation bugs
-    - Enhanced simulation process
-    - Added checker LLM support for proper simulation termination
-
+      - Added support for kwargs for broader usage.
+      - Enhanced simulation process.
+      - Unified chat history format.
+      - Other minor changes for visibility.
+* *September 2025 (v0.2.0)*: We have supported vLLM local model for the patient simulation.
 * *September 2025 (v0.1.8)*: Fixed bugs and updated explanation about the simulation.
 * *September 2025 (v0.1.7)*: Fixed typos of the prompts.
 * *September 2025 (v0.1.6)*: Updated dependencies.
@@ -263,12 +264,26 @@ from patientsim.environment import OPSimulation, EDSimulation
 simulation_env = EDSimulation(patient_agent, doctor_agent)
 dialogs = simulation_env.simulate()
 
+# Emergency department with additional kwargs
+# NOTE: You can also set other generation parameters beyond temperature and seed
+patient_kwargs = {"reasoning_effort": "low"}
+doctor_kwargs = {"reasoning_effort": "medium"}    
+simulation_env = EDSimulation(patient_agent, doctor_agent, patient_kwargs, doctor_kwargs)
+dialogs = simulation_env.simulate()
+
 # Emergency department with checker agent
 simulation_env = EDSimulation(patient_agent, doctor_agent, checker_agent)
 dialogs = simulation_env.simulate()
 
 # Outpatient
 simulation_env = OPSimulation(patient_agent, admin_staff_agent)
+dialogs = simulation_env.simulate()
+
+# Outpatient with additional kwargs
+# NOTE: You can also set other generation parameters beyond temperature and seed
+patient_kwargs = {"reasoning_effort": "low"}
+staff_kwargs = {"reasoning_effort": "medium"}    
+simulation_env = OPSimulation(patient_agent, admin_staff_agent, patient_kwargs, staff_kwargs)
 dialogs = simulation_env.simulate()
 
 # Outpatient with checker agent
