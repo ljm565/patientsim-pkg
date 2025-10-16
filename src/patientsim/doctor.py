@@ -68,6 +68,11 @@ class DoctorAgent:
             'arrival_transport': kwargs.get('arrival_transport', 'N/A'),
         }
         
+        # Warn if any patient condition is missing
+        missing_conditions = [k for k, v in self.patient_conditions.items() if v == 'N/A']
+        if missing_conditions:
+            log(f"Required patient information missing for the doctor agent: {', '.join(missing_conditions)}. Using default values.", level="warning")
+
         # Set random seed for reproducibility
         if self.random_seed:
             set_seed(self.random_seed)
