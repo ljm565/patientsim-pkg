@@ -127,7 +127,7 @@ class VLLMClient:
                 **kwargs
             )
             assistant_msg = response.choices[0].message
-            self.histories.append({"role": assistant_msg.role, "content": assistant_msg.content})
+            self.histories.append({"role": assistant_msg.role, "content": [{"type": "text", "text": assistant_msg.content}]})
 
             # Logging token usage
             if response.usage:
