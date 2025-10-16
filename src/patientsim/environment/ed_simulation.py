@@ -57,7 +57,11 @@ class EDSimulation:
         self.doctor_agent.client.reset_history(verbose=verbose)
 
 
-    def simulate(self, verbose: bool = True) -> list[dict]:
+    def simulate(self, 
+                 verbose: bool = True, 
+                 patient_kwargs: dict = {},
+                 doctor_kwargs: dict = {},
+                 **kwargs) -> list[dict]:
         """
         Run a full conversation simulation between the Doctor and Patient agents
         in the emergency department setting.
@@ -69,6 +73,8 @@ class EDSimulation:
 
         Args:
             verbose (bool, optional): Whether to print verbose output. Defaults to True.
+            patient_kwargs (dict, optional): Additional keyword arguments for the Patient agent. Defaults to {}.
+            doctor_kwargs (dict, optional): Additional keyword arguments for the Doctor agent. Defaults to {}.
         
         Returns:
             list[dict]: Dialogue history, where each dict contains:
@@ -92,21 +98,25 @@ class EDSimulation:
             progress = int(((inference_idx + 1) / self.max_inferences) * 100)
 
             # Obtain response from patient
+            patient_kwargs.update(kwargs)
             patient_response = self.patient_agent(
                 user_prompt=dialog_history[-1]["content"],
                 using_multi_turn=True,
-                verbose=verbose
+                verbose=verbose,
+                **patient_kwargs
             )
             dialog_history.append({"role": "Patient", "content": patient_response})
             role = f"{colorstr('green', 'Patient')} [{progress}%]"
             log(f"{role:<23}: {patient_response}")
 
             # Obtain response from doctor
+            doctor_kwargs.update(kwargs)
             doctor_response = self.doctor_agent(
                 user_prompt=dialog_history[-1]["content"] + "\nThis is the final turn. Now, you must provide your top5 differential diagnosis." \
                     if inference_idx == self.max_inferences - 1 else dialog_history[-1]["content"],
                 using_multi_turn=True,
-                verbose=verbose
+                verbose=verbose,
+                **doctor_kwargs
             )
             dialog_history.append({"role": "Doctor", "content": doctor_response})
             role = f"{colorstr('blue', 'Doctor')}  [{progress}%]"
