@@ -99,11 +99,11 @@ class GPTClient:
             if self.__first_turn:
                 # System prompt
                 if system_prompt:
-                    self.histories.append({"role": "system", "content": system_prompt})
+                    self.histories.append({"role": "system", "content": [{"type": "text", "text": system_prompt}]})
             
                 # Greeting
                 if greeting and self.__first_turn:
-                    self.histories.append({"role": "assistant", "content": greeting})
+                    self.histories.append({"role": "assistant", "content": [{"type": "text", "text": greeting}]})
                 
                 self.__first_turn = False
                     
