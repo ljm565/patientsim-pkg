@@ -22,12 +22,13 @@ The simulation scenarios also have two visit types:
 &nbsp;
 
 ### Recent updates 📣
-* *September 2025 (v0.2.0)*: We have supported vLLM local model for the patient simulation.
+* *October 2025 (v0.2.1)*: We have supported vLLM local model for the patient simulation.
   * Minor improvements:
-    - Fixed simulation bugs
-    - Enhanced simulation process
-    - Added checker LLM support for proper simulation termination
-
+      - Added support for kwargs for broader usage.
+      - Enhanced simulation process.
+      - Unified chat history format.
+      - Other minor changes for visibility.
+* *September 2025 (v0.2.0)*: We have supported vLLM local model for the patient simulation.
 * *September 2025 (v0.1.8)*: Fixed bugs and updated explanation about the simulation.
 * *September 2025 (v0.1.7)*: Fixed typos of the prompts.
 * *September 2025 (v0.1.6)*: Updated dependencies.
