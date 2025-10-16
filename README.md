@@ -22,7 +22,7 @@ The simulation scenarios also have two visit types:
 &nbsp;
 
 ### Recent updates 📣
-* *October 2025 (v0.2.1)*: We have supported vLLM local model for the patient simulation.
+* *October 2025 (v0.2.1)*: We have improved several things.
   * Minor improvements:
       - Added support for kwargs for broader usage.
       - Enhanced simulation process.
