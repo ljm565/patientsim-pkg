@@ -57,7 +57,11 @@ class OPSimulation:
         self.admin_staff_agent.client.reset_history(verbose=verbose)
 
 
-    def simulate(self, verbose: bool = True) -> list[dict]:
+    def simulate(self, 
+                 verbose: bool = True, 
+                 patient_kwargs: dict = {},
+                 staff_kwargs: dict = {},
+                 **kwargs) -> list[dict]:
         """
         Run a full conversation simulation between the Administration Staff and Patient agents
         in the emergency department setting.
@@ -68,6 +72,8 @@ class OPSimulation:
 
         Args:
             verbose (bool, optional): Whether to print verbose output. Defaults to True.
+            patient_kwargs (dict, optional): Additional keyword arguments for the Patient agent. Defaults to {}.
+            staff_kwargs (dict, optional): Additional keyword arguments for the Administration Staff agent. Defaults to {}.
         
         Returns:
             list[dict]: Dialogue history, where each dict contains:
@@ -91,21 +97,25 @@ class OPSimulation:
             progress = int(((inference_idx + 1) / self.max_inferences) * 100)
 
             # Obtain response from patient
+            patient_kwargs.update(kwargs)
             patient_response = self.patient_agent(
                 user_prompt=dialog_history[-1]["content"],
                 using_multi_turn=True,
-                verbose=verbose
+                verbose=verbose,
+                **patient_kwargs
             )
             dialog_history.append({"role": "Patient", "content": patient_response})
             role = f"{colorstr('green', 'Patient')} [{progress}%]"
             log(f"{role:<23}: {patient_response}")
 
             # Obtain response from staff
+            staff_kwargs.update(kwargs)
             staff_response = self.admin_staff_agent(
                 user_prompt=dialog_history[-1]["content"] + "\nThis is the final turn. Now, you must provide your top5 differential diagnosis." \
                     if inference_idx == self.max_inferences - 1 else dialog_history[-1]["content"],
                 using_multi_turn=True,
-                verbose=verbose
+                verbose=verbose,
+                **staff_kwargs
             )
             dialog_history.append({"role": "Staff", "content": staff_response})
             role = f"{colorstr('blue', 'Staff')}   [{progress}%]"

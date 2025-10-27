@@ -161,7 +161,8 @@ class AdminStaffAgent:
     def __call__(self,
                  user_prompt: str,
                  using_multi_turn: bool = True,
-                 verbose: bool = True) -> str:
+                 verbose: bool = True,
+                 **kwargs) -> str:
         """
         Call the patient agent with a user prompt and return the response.
 
@@ -182,5 +183,6 @@ class AdminStaffAgent:
             verbose=verbose,
             temperature=self.temperature,
             seed=self.random_seed,
+            **kwargs
         )
         return response

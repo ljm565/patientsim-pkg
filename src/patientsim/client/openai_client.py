@@ -99,11 +99,11 @@ class GPTClient:
             if self.__first_turn:
                 # System prompt
                 if system_prompt:
-                    self.histories.append({"role": "system", "content": system_prompt})
+                    self.histories.append({"role": "system", "content": [{"type": "text", "text": system_prompt}]})
             
                 # Greeting
                 if greeting and self.__first_turn:
-                    self.histories.append({"role": "assistant", "content": greeting})
+                    self.histories.append({"role": "assistant", "content": [{"type": "text", "text": greeting}]})
                 
                 self.__first_turn = False
                     
@@ -117,13 +117,14 @@ class GPTClient:
                 **kwargs
             )
             assistant_msg = response.choices[0].message
-            self.histories.append({"role": assistant_msg.role, "content": assistant_msg.content})
+            self.histories.append({"role": assistant_msg.role, "content": [{"type": "text", "text": assistant_msg.content}]})
 
             # Logging token usage
             if response.usage:
                 self.token_usages.setdefault("prompt_tokens", []).append(response.usage.prompt_tokens)
                 self.token_usages.setdefault("completion_tokens", []).append(response.usage.completion_tokens)
                 self.token_usages.setdefault("total_tokens", []).append(response.usage.total_tokens)
+                self.token_usages.setdefault("reasoning_tokens", []).append(response.usage.completion_tokens_details.reasoning_tokens)
 
             return assistant_msg.content
         

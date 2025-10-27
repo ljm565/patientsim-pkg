@@ -135,7 +135,8 @@ class CheckerAgent:
 
 
     def __call__(self,
-                 response: str) -> str:
+                 response: str,
+                 **kwargs) -> str:
         """
         Call the checker agent with a response, and then return the result.
 
@@ -151,6 +152,7 @@ class CheckerAgent:
             verbose=False,
             temperature=self.temperature,
             seed=self.random_seed,
+            **kwargs
         )
         return response
         

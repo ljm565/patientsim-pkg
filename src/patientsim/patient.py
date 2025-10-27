@@ -126,6 +126,11 @@ class PatientAgent:
             assert self.patient_conditions.get('chief_complaint') != 'N/A', \
                 log(colorstr("red", "To simulate outpatient, you should provide at least a chief complaint."))
         
+        # Warn if any patient condition is missing
+        missing_conditions = [k for k, v in self.patient_conditions.items() if v == 'N/A']
+        if missing_conditions:
+            log(f"Required patient information missing for the patient agent: {', '.join(missing_conditions)}. Using default values.", level="warning")
+
 
     def _init_model(self,
                     model: str,
@@ -258,7 +263,8 @@ class PatientAgent:
     def __call__(self,
                  user_prompt: str,
                  using_multi_turn: bool = True,
-                 verbose: bool = True) -> str:
+                 verbose: bool = True,
+                 **kwargs) -> str:
         """
         Call the patient agent with a user prompt and return the response.
 
@@ -276,7 +282,8 @@ class PatientAgent:
             using_multi_turn=using_multi_turn,
             verbose=verbose,
             temperature=self.temperature,
-            seed=self.random_seed
+            seed=self.random_seed,
+            **kwargs
         )
         return response
         
