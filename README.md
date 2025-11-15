@@ -78,11 +78,7 @@ When using Azure OpenAI, be sure to opt out of human review of the data to maint
 > To use Vertex AI, you must complete the following setup steps:
 > 1) Select or create a Google Cloud project in the Google Cloud Console.
 > 2) Enable the Vertex AI API.
-> 3) Create a Service Account:
->    * Navigate to **IAM & Admin > Service Accounts**
->    * Click **Create Service Account**
->    * Assign the role **Vertex AI Platform Express User**
-> 4. Generate a credential key in JSON format and set the path to this JSON file in the `GOOGLE_APPLICATION_CREDENTIALS` environment variable.
+> 3) Generate a Vertex AI Express Mode API key and set its value in the `GENAI_API_KEY` environment variable. 
 
 &nbsp;
 
@@ -308,14 +304,13 @@ dialogs = simulation_env.simulate()
 
 ## Citation
 ```
-@misc{kyung2025patientsimpersonadrivensimulatorrealistic,
-      title={PatientSim: A Persona-Driven Simulator for Realistic Doctor-Patient Interactions}, 
-      author={Daeun Kyung and Hyunseung Chung and Seongsu Bae and Jiho Kim and Jae Ho Sohn and Taerim Kim and Soo Kyung Kim and Edward Choi},
-      year={2025},
-      eprint={2505.17818},
-      archivePrefix={arXiv},
-      primaryClass={cs.AI},
-      url={https://arxiv.org/abs/2505.17818}, 
+@inproceedings{
+    kyung2025patientsim,
+    title={PatientSim: A Persona-Driven Simulator for Realistic Doctor-Patient Interactions},
+    author={Daeun Kyung and Hyunseung Chung and Seongsu Bae and Jiho Kim and Jae Ho Sohn and Taerim Kim and Soo Kyung Kim and Edward Choi},
+    booktitle={The Thirty-ninth Annual Conference on Neural Information Processing Systems Datasets and Benchmarks Track},
+    year={2025},
+    url={https://openreview.net/forum?id=1THAjdP4QJ}
 }
 ```
 
