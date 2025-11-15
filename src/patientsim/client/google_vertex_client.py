@@ -12,57 +12,31 @@ from patientsim.utils.common_utils import exponential_backoff
 
 
 class GeminiVertexClient:
-    def __init__(self,
-                 model: str,
-                 project_id: Optional[str] = None,
-                 project_location: Optional[str] = None,
-                 vertex_credentials: Optional[str] = None):
+    def __init__(self, model: str, api_key: Optional[str] = None):
         # Initialize
         self.model = model
-        self._init_environment(project_id, project_location, vertex_credentials)
+        self._init_environment(api_key)
         self.histories = list()
         self.token_usages = dict()
         self.__first_turn = True
 
 
-    def _init_environment(self,
-                          project_id: Optional[str] = None,
-                          project_location: Optional[str] = None,
-                          vertex_credentials: Optional[str] = None) -> None:
+    def _init_environment(self, api_key: Optional[str] = None) -> None:
         """
-        Initialize Goolge GCP Gemini client.
+        Initialize Google GCP Gemini client.
 
         Args:
-            project_id (Optional[str]): Google Cloud project ID. If not provided, it will
-                                        be loaded from environment variables.
-            project_location (Optional[str]): Google Cloud project location. If not provided,
-                                              it will be loaded from environment variables.
-            vertex_credentials (Optional[str]): Path to the Google Cloud credentials file. If not provided,
-                                               it will be loaded from environment variables.
+            api_key (Optional[str]): API key for Google Gemini API. If not provided, it will
+                                     be loaded from environment variables.
         """
-        if not vertex_credentials:
+        if not api_key:
             load_dotenv(override=True)
-            vertex_credentials = os.environ.get("GOOGLE_APPLICATION_CREDENTIALS", None)
-            assert vertex_credentials is not None, "GOOGLE_APPLICATION_CREDENTIALS is not set in .env or passed explicitly."
-        else:
-            os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = vertex_credentials
-
-        if not project_id:
-            load_dotenv(override=True)
-            project_id = os.environ.get("GOOGLE_PROJECT_ID", None) if not project_id else project_id
-        
-        if not project_location:
-            load_dotenv(override=True)
-            project_location = (
-                os.environ.get("GOOGLE_PROJECT_LOCATION", None)
-                if not project_location
-                else project_location
-            )
+            api_key = os.environ.get("GOOGLE_API_KEY", None)
+        os.environ["GOOGLE_GENAI_USE_VERTEXAI"] = "True"
         
         self.client = genai.Client(
             vertexai=True,
-            project=project_id,
-            location=project_location,
+            api_key=api_key,
             http_options=HttpOptions(api_version="v1"),
         )
 
