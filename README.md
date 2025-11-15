@@ -295,6 +295,40 @@ dialogs = simulation_env.simulate()
 # > ...
 ```
 
+&nbsp;
+
+### Download dataset
+To set up the patient profile, you can use the MIMIC-ED patient profile following our paper, or use your own patient data. \
+Our dataset is available through PhysioNet: [PatientSim Dataset](https://physionet.org/content/persona-patientsim/1.0.0/)
+
+#### Prerequisites
+Before downloading the dataset, you must:
+1. Be a **credentialed user** on PhysioNet
+2. Sign the **Data Use Agreement (DUA)** for our project: https://physionet.org/sign-dua/persona-patientsim/1.0.0/ 
+
+For information on becoming a credentialed user, visit: https://physionet.org/credential-application/
+
+
+#### Quick Setup
+If you are a credentialed user, you can easily set up the dataset using the following code:
+```python
+from patientsim.dataset import DatasetManager
+
+# Option 1: Download only patient_profile.json (recommended for quick start)
+manager = DatasetManager(save_path="./data")
+manager.download(mode="profile")
+
+
+# Option 2: Download entire dataset
+manager = DatasetManager(save_path="./data")
+manager.download(mode="all")
+```
+
+You will be prompted to enter your credentials:
+```
+Physionet Username: your_username
+Physionet Password: ********
+```
 
 
 &nbsp;
