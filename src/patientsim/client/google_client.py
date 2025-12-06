@@ -22,10 +22,10 @@ class GeminiClient:
 
     def _init_environment(self, api_key: Optional[str] = None) -> None:
         """
-        Initialize Goolge GCP Gemini client.
+        Initialize Google GCP Gemini client.
 
         Args:
-            api_key (Optional[str]): API key for OpenAI. If not provided, it will
+            api_key (Optional[str]): API key for Google Gemini API. If not provided, it will
                                      be loaded from environment variables.
         """
         if not api_key:
