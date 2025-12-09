@@ -1,7 +1,7 @@
 import os
 from openai import AzureOpenAI
-from dotenv import load_dotenv
 from typing import List, Optional
+from dotenv import load_dotenv, find_dotenv
 
 from patientsim.utils import log
 
@@ -28,11 +28,13 @@ class GPTAzureClient:
                                             it will be set to a default value.
         """
         if not api_key:
-            load_dotenv(override=True)
+            dotenv_path = find_dotenv(usecwd=True)
+            load_dotenv(dotenv_path, override=True)
             api_key = os.environ.get("OPENAI_API_KEY", None)
 
         if not azure_endpoint:
-            load_dotenv(override=True)
+            dotenv_path = find_dotenv(usecwd=True)
+            load_dotenv(dotenv_path, override=True)
             azure_endpoint = os.environ.get("AZURE_OPENAI_ENDPOINT", None)
 
         self.client = AzureOpenAI(

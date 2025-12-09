@@ -1,10 +1,10 @@
 import os
 import time
-from dotenv import load_dotenv
 from typing import List, Optional
 from google import genai
 from google.genai import types
 from google.genai.types import HttpOptions
+from dotenv import load_dotenv, find_dotenv
 
 from patientsim.utils import log
 from patientsim.utils.common_utils import exponential_backoff
@@ -30,7 +30,8 @@ class GeminiVertexClient:
                                      be loaded from environment variables.
         """
         if not api_key:
-            load_dotenv(override=True)
+            dotenv_path = find_dotenv(usecwd=True)
+            load_dotenv(dotenv_path, override=True)
             api_key = os.environ.get("GOOGLE_API_KEY", None)
         os.environ["GOOGLE_GENAI_USE_VERTEXAI"] = "True"
         

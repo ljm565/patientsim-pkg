@@ -1,7 +1,7 @@
 import os
 from openai import OpenAI
-from dotenv import load_dotenv
 from typing import List, Optional
+from dotenv import load_dotenv, find_dotenv
 
 from patientsim.utils import log
 
@@ -26,7 +26,8 @@ class GPTClient:
                                      be loaded from environment variables.
         """
         if not api_key:
-            load_dotenv(override=True)
+            dotenv_path = find_dotenv(usecwd=True)
+            load_dotenv(dotenv_path, override=True)
             api_key = os.environ.get("OPENAI_API_KEY", None)
         self.client = OpenAI(api_key=api_key)
 
