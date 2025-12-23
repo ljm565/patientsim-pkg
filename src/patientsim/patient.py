@@ -26,6 +26,7 @@ class PatientAgent:
                  azure_endpoint: Optional[str] = None,
                  vllm_endpoint: Optional[str] = None,
                  system_prompt_path: Optional[str] = None,
+                 additional_patient_conditions: dict = {},
                  **kwargs) -> None:
         
         # Initialize patient attributes
@@ -34,10 +35,11 @@ class PatientAgent:
         self.recall_level = recall_level.lower()
         self.confusion_level = confusion_level.lower()
         self.lang_proficiency_level = lang_proficiency_level.upper()
+        self.system_prompt_path = system_prompt_path
         self.__sanity_check()
 
         # Initialize environment
-        self._init_env(**kwargs)
+        self._init_env(additional_patient_conditions, **kwargs)
         
         # Initialize model, API client, and other parameters
         self.model = model
@@ -58,9 +60,12 @@ class PatientAgent:
         log("PatientAgent initialized successfully", color=True)
     
 
-    def _init_env(self, **kwargs) -> None:
+    def _init_env(self, additional_patient_conditions: dict = {}, **kwargs) -> None:
         """
         Initialize the environment with default settings.
+
+        Args:
+            additional_patient_conditions (dict): Additional patient conditions to override defaults. Defaults to {}.
         """
         self.random_seed = kwargs.get('random_seed', None)
         # Set random seed for reproducibility
@@ -113,8 +118,9 @@ class PatientAgent:
             'diagnosis': kwargs.get('diagnosis', 'N/A'),
             'department': kwargs.get('department', 'N/A'),
         }
+        self.patient_conditions.update(additional_patient_conditions)
 
-        if self.visit_type == 'outpatient':
+        if self.visit_type == 'outpatient' and not self.system_prompt_path:
             assert self.patient_conditions.get('department') != 'N/A', \
                 log(colorstr("red", "To simulate outpatient, you should provide a specific department."))
             assert self.patient_conditions.get('chief_complaint') != 'N/A', \
@@ -219,6 +225,7 @@ class PatientAgent:
         Returns:
             str: The formatted system prompt with patient attributes filled in.
         """
+        # Generate descriptions for each attribute
         personality_desc = get_personality_description(self.personality)
         recall_desc = get_recall_description(self.recall_level)
         confusion_desc = get_confusion_description(self.confusion_level)
@@ -235,14 +242,19 @@ class PatientAgent:
             self.confusion_level
         )
         sentence_limit = PERSONALITY_SENTENCE_LIMIT.get(self.personality, "3")
+        
+        # Build the system prompt
+        prompt_kwargs = {
+            'personality': personality_desc,
+            'recall': recall_desc,
+            'confusion': confusion_desc,
+            'lang_proficiency': lang_proficiency_desc,
+            'reminder': reminder_desc,
+            'sentence_limit': sentence_limit,
+        }
+        prompt_kwargs.update(self.patient_conditions)
         system_prompt = system_prompt_template.format(
-            personality=personality_desc,
-            recall=recall_desc,
-            confusion=confusion_desc,
-            lang_proficiency=lang_proficiency_desc,
-            reminder=reminder_desc,
-            sentence_limit=sentence_limit,
-            **self.patient_conditions
+            **prompt_kwargs
         )
         prompt_valid_check(system_prompt, self.patient_conditions)
         return system_prompt

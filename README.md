@@ -155,6 +155,7 @@ print(response)
 ```python
 from patientsim import PatientAgent
 
+# Using a default system prompt
 patient_agent = PatientAgent('gpt-4o', 
                               visit_type='emergency_department',
                               personality='verbose',
@@ -164,6 +165,19 @@ patient_agent = PatientAgent('gpt-4o',
                               age='45',
                               tobacco='Denies tobacco use',
                               allergies="Penicillins",
+                              ...
+                            )
+
+# Using a custom system prompt
+# You can pass additional keyword arguments required by your custom system prompt
+patient_agent = PatientAgent('gpt-4o', 
+                              visit_type='outpatient',
+                              personality='verbose',
+                              recall_level='low',
+                              confusion_level='moderate',
+                              lang_proficiency_level='B',
+                              system_prompt_path='my_system_prompt.txt',
+                              additional_patient_conditions={"condition_1": "value_1", ...},
                               ...
                             )
 ```
