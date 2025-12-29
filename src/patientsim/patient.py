@@ -27,6 +27,7 @@ class PatientAgent:
                  vllm_endpoint: Optional[str] = None,
                  system_prompt_path: Optional[str] = None,
                  additional_patient_conditions: dict = {},
+                 warning_verbose: bool = True,
                  **kwargs) -> None:
         
         # Initialize patient attributes
@@ -36,6 +37,7 @@ class PatientAgent:
         self.confusion_level = confusion_level.lower()
         self.lang_proficiency_level = lang_proficiency_level.upper()
         self.system_prompt_path = system_prompt_path
+        self.warning_verbose = warning_verbose
         self.__sanity_check()
 
         # Initialize environment
@@ -128,7 +130,7 @@ class PatientAgent:
         
         # Warn if any patient condition is missing
         missing_conditions = [k for k, v in self.patient_conditions.items() if v == 'N/A']
-        if missing_conditions:
+        if missing_conditions and self.warning_verbose:
             log(f"Required patient information missing for the patient agent: {', '.join(missing_conditions)}. Using default values.", level="warning")
 
 
