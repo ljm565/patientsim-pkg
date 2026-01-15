@@ -122,6 +122,16 @@ class AdminStaffAgent:
         return system_prompt
     
     
+    def reset_history(self, verbose: bool = True) -> None:
+        """
+        Reset the conversation history.
+
+        Args:
+            verbose (bool): Whether to print verbose output. Defaults to True.
+        """
+        self.client.reset_history(verbose=verbose)
+    
+    
     def build_prompt(self) -> None:
         """
         Build the system prompt for the administration office agent using the provided template and patient conditions.

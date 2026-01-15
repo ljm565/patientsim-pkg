@@ -131,6 +131,16 @@ class DoctorAgent:
                 system_prompt = f.read()
         return system_prompt
     
+
+    def reset_history(self, verbose: bool = True) -> None:
+        """
+        Reset the conversation history.
+
+        Args:
+            verbose (bool): Whether to print verbose output. Defaults to True.
+        """
+        self.client.reset_history(verbose=verbose)
+    
     
     def build_prompt(self) -> None:
         """

@@ -197,6 +197,16 @@ class PatientAgent:
             with open(system_prompt_path, 'r') as f:
                 system_prompt = f.read()
         return system_prompt
+    
+
+    def reset_history(self, verbose: bool = True) -> None:
+        """
+        Reset the conversation history.
+
+        Args:
+            verbose (bool): Whether to print verbose output. Defaults to True.
+        """
+        self.client.reset_history(verbose=verbose)
 
 
     def __sanity_check(self) -> None:
