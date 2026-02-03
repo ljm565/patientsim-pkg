@@ -109,7 +109,7 @@ GOOGLE_APPLICATION_CREDENTIALS="/path/to/google_credentials.json" # Path to GCP 
 # Patient Agent (GPT)
 from patientsim import PatientAgent
 
-patient_agent = PatientAgent('gpt-4o', 
+patient_agent = PatientAgent('gpt-5', 
                               visit_type='emergency_department',
                               random_seed=42,
                               random_sampling=False,
@@ -156,7 +156,7 @@ print(response)
 from patientsim import PatientAgent
 
 # Using a default system prompt
-patient_agent = PatientAgent('gpt-4o', 
+patient_agent = PatientAgent('gpt-5', 
                               visit_type='emergency_department',
                               personality='verbose',
                               recall_level='low',
@@ -170,7 +170,7 @@ patient_agent = PatientAgent('gpt-4o',
 
 # Using a custom system prompt
 # You can pass additional keyword arguments required by your custom system prompt
-patient_agent = PatientAgent('gpt-4o', 
+patient_agent = PatientAgent('gpt-5', 
                               visit_type='outpatient',
                               personality='verbose',
                               recall_level='low',
@@ -225,7 +225,7 @@ patient_agent = PatientAgent('gpt-4o',
 ```python
 from patientsim import DoctorAgent
 
-doctor_agent = DoctorAgent('gpt-4o', use_azure=False)
+doctor_agent = DoctorAgent('gpt-5', use_azure=False)
 doctor_agent = DoctorAgent('gemini-2.5-flash', use_vertex=False)
 doctor_agent = DoctorAgent('meta-llama/Llama-3.3-70B-Instruct', use_vllm=True, vllm_endpoint="http://localhost:8000")
 print(doctor_agent.system_prompt)
@@ -242,7 +242,7 @@ print(doctor_agent.system_prompt)
 ```python
 from patientsim import AdminStaffAgent
 
-admin_staff_agent = AdminStaffAgent('gpt-4o', department_list=['gastroenterology', 'cardiology'], use_azure=False)
+admin_staff_agent = AdminStaffAgent('gpt-5', department_list=['gastroenterology', 'cardiology'], use_azure=False)
 admin_staff_agent = AdminStaffAgent('gemini-2.5-flash', department_list=['gastroenterology', 'cardiology'], use_vertex=False)
 admin_staff_agent = AdminStaffAgent('meta-llama/Llama-3.3-70B-Instruct', 
                                     department_list=['gastroenterology', 'cardiology'], 
@@ -259,7 +259,7 @@ Using CheckerAgent is useful for improving safety and consistency in conversatio
 ```python
 from patientsim import CheckerAgent
 
-checker_agent = CheckerAgent('gpt-4o', visit_type='emergency_department', use_azure=False)
+checker_agent = CheckerAgent('gpt-5', visit_type='emergency_department', use_azure=False)
 checker_agent = CheckerAgent('gemini-2.5-flash', visit_type='emergency_department', use_vertex=False)
 checker_agent = CheckerAgent('meta-llama/Llama-3.3-70B-Instruct', visit_type='emergency_department', vllm_endpoint="http://localhost:8000")
 print(checker_agent.prompt_template)
