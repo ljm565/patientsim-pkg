@@ -2,8 +2,8 @@ import os
 import time
 from google import genai
 from google.genai import types
-from dotenv import load_dotenv
 from typing import List, Optional
+from dotenv import load_dotenv, find_dotenv
 
 from patientsim.utils import log
 from patientsim.utils.common_utils import exponential_backoff
@@ -22,14 +22,15 @@ class GeminiClient:
 
     def _init_environment(self, api_key: Optional[str] = None) -> None:
         """
-        Initialize Goolge GCP Gemini client.
+        Initialize Google GCP Gemini client.
 
         Args:
-            api_key (Optional[str]): API key for OpenAI. If not provided, it will
+            api_key (Optional[str]): API key for Google Gemini API. If not provided, it will
                                      be loaded from environment variables.
         """
         if not api_key:
-            load_dotenv(override=True)
+            dotenv_path = find_dotenv(usecwd=True)
+            load_dotenv(dotenv_path, override=True)
             api_key = os.environ.get("GOOGLE_API_KEY", None)
         self.client = genai.Client(api_key=api_key)
 

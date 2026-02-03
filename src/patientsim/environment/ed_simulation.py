@@ -53,8 +53,8 @@ class EDSimulation:
         Args:
             verbose (bool, optional): Whether to print verbose output. Defaults to True.
         """
-        self.patient_agent.client.reset_history(verbose=verbose)
-        self.doctor_agent.client.reset_history(verbose=verbose)
+        self.patient_agent.reset_history(verbose=verbose)
+        self.doctor_agent.reset_history(verbose=verbose)
 
 
     def simulate(self, 

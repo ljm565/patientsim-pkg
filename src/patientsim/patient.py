@@ -24,11 +24,10 @@ class PatientAgent:
                  use_vertex: bool = False,
                  use_vllm: bool = False,
                  azure_endpoint: Optional[str] = None,
-                 genai_project_id: Optional[str] = None,
-                 genai_project_location: Optional[str] = None,
-                 genai_credential_path: Optional[str] = None,
                  vllm_endpoint: Optional[str] = None,
                  system_prompt_path: Optional[str] = None,
+                 additional_patient_conditions: dict = {},
+                 log_verbose: bool = True,
                  **kwargs) -> None:
         
         # Initialize patient attributes
@@ -37,10 +36,12 @@ class PatientAgent:
         self.recall_level = recall_level.lower()
         self.confusion_level = confusion_level.lower()
         self.lang_proficiency_level = lang_proficiency_level.upper()
+        self.system_prompt_path = system_prompt_path
+        self.log_verbose = log_verbose
         self.__sanity_check()
 
         # Initialize environment
-        self._init_env(**kwargs)
+        self._init_env(additional_patient_conditions, **kwargs)
         
         # Initialize model, API client, and other parameters
         self.model = model
@@ -51,9 +52,6 @@ class PatientAgent:
             use_vertex=use_vertex,
             use_vllm=use_vllm,
             azure_endpoint=azure_endpoint,
-            genai_project_id=genai_project_id,
-            genai_project_location=genai_project_location,
-            genai_credential_path=genai_credential_path,
             vllm_endpoint=vllm_endpoint
         )
         
@@ -61,12 +59,16 @@ class PatientAgent:
         system_prompt_template = self._init_prompt(self.visit_type, system_prompt_path)
         self.system_prompt = self.build_prompt(system_prompt_template)
         
-        log("PatientAgent initialized successfully", color=True)
+        if self.log_verbose:
+            log("PatientAgent initialized successfully", color=True)
     
 
-    def _init_env(self, **kwargs) -> None:
+    def _init_env(self, additional_patient_conditions: dict = {}, **kwargs) -> None:
         """
         Initialize the environment with default settings.
+
+        Args:
+            additional_patient_conditions (dict): Additional patient conditions to override defaults. Defaults to {}.
         """
         self.random_seed = kwargs.get('random_seed', None)
         # Set random seed for reproducibility
@@ -119,8 +121,9 @@ class PatientAgent:
             'diagnosis': kwargs.get('diagnosis', 'N/A'),
             'department': kwargs.get('department', 'N/A'),
         }
+        self.patient_conditions.update(additional_patient_conditions)
 
-        if self.visit_type == 'outpatient':
+        if self.visit_type == 'outpatient' and not self.system_prompt_path:
             assert self.patient_conditions.get('department') != 'N/A', \
                 log(colorstr("red", "To simulate outpatient, you should provide a specific department."))
             assert self.patient_conditions.get('chief_complaint') != 'N/A', \
@@ -128,7 +131,7 @@ class PatientAgent:
         
         # Warn if any patient condition is missing
         missing_conditions = [k for k, v in self.patient_conditions.items() if v == 'N/A']
-        if missing_conditions:
+        if missing_conditions and self.log_verbose:
             log(f"Required patient information missing for the patient agent: {', '.join(missing_conditions)}. Using default values.", level="warning")
 
 
@@ -139,9 +142,6 @@ class PatientAgent:
                     use_vertex: bool = False,
                     use_vllm: bool = False,
                     azure_endpoint: Optional[str] = None,
-                    genai_project_id: Optional[str] = None,
-                    genai_project_location: Optional[str] = None,
-                    genai_credential_path: Optional[str] = None,
                     vllm_endpoint: Optional[str] = None) -> None:
         """
         Initialize the model and API client based on the specified model type.
@@ -154,16 +154,13 @@ class PatientAgent:
             use_vertex (bool): Whether to use Google Vertex AI client.
             use_vllm (bool): Whether to use vLLM client.
             azure_endpoint (Optional[str], optional): Azure OpenAI endpoint. Defaults to None.
-            genai_project_id (Optional[str], optional): Google Cloud project ID. Defaults to None.
-            genai_project_location (Optional[str], optional): Google Cloud project location. Defaults to None.
-            genai_credential_path (Optional[str], optional): Path to Google Cloud credentials JSON file. Defaults to None.
             vllm_endpoint (Optional[str], optional): Path to the vLLM server. Defaults to None.
 
         Raises:
             ValueError: If the specified model is not supported.
         """
         if 'gemini' in self.model.lower():
-            self.client = GeminiVertexClient(model, genai_project_id, genai_project_location, genai_credential_path) if use_vertex else GeminiClient(model, api_key)
+            self.client = GeminiVertexClient(model, api_key) if use_vertex else GeminiClient(model, api_key)
         elif 'gpt' in self.model.lower():       # TODO: Support o3, o4 models etc.
             self.client = GPTAzureClient(model, api_key, azure_endpoint) if use_azure else GPTClient(model, api_key)
         elif use_vllm:
@@ -200,6 +197,16 @@ class PatientAgent:
             with open(system_prompt_path, 'r') as f:
                 system_prompt = f.read()
         return system_prompt
+    
+
+    def reset_history(self, verbose: bool = True) -> None:
+        """
+        Reset the conversation history.
+
+        Args:
+            verbose (bool): Whether to print verbose output. Defaults to True.
+        """
+        self.client.reset_history(verbose=verbose)
 
 
     def __sanity_check(self) -> None:
@@ -231,6 +238,7 @@ class PatientAgent:
         Returns:
             str: The formatted system prompt with patient attributes filled in.
         """
+        # Generate descriptions for each attribute
         personality_desc = get_personality_description(self.personality)
         recall_desc = get_recall_description(self.recall_level)
         confusion_desc = get_confusion_description(self.confusion_level)
@@ -247,14 +255,19 @@ class PatientAgent:
             self.confusion_level
         )
         sentence_limit = PERSONALITY_SENTENCE_LIMIT.get(self.personality, "3")
+        
+        # Build the system prompt
+        prompt_kwargs = {
+            'personality': personality_desc,
+            'recall': recall_desc,
+            'confusion': confusion_desc,
+            'lang_proficiency': lang_proficiency_desc,
+            'reminder': reminder_desc,
+            'sentence_limit': sentence_limit,
+        }
+        prompt_kwargs.update(self.patient_conditions)
         system_prompt = system_prompt_template.format(
-            personality=personality_desc,
-            recall=recall_desc,
-            confusion=confusion_desc,
-            lang_proficiency=lang_proficiency_desc,
-            reminder=reminder_desc,
-            sentence_limit=sentence_limit,
-            **self.patient_conditions
+            **prompt_kwargs
         )
         prompt_valid_check(system_prompt, self.patient_conditions)
         return system_prompt

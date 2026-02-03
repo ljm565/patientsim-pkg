@@ -22,12 +22,11 @@ The simulation scenarios also have two visit types:
 &nbsp;
 
 ### Recent updates 📣
-* *October 2025 (v0.2.1)*: We have improved several things.
-  * Minor improvements:
-      - Added support for kwargs for broader usage.
-      - Enhanced simulation process.
-      - Unified chat history format.
-      - Other minor changes for visibility.
+* *February 2026 (v1.0.0)*: Several improvements were made.
+  - The patient agent now supports multiple system prompts and conditions for diverse simulation scenarios.
+  - MIMIC-based data can now be downloaded.
+  - Simulation code for Google Cloud projects has been simplified.
+* *October 2025 (v0.2.1)*: We have unified history format and improved simulation process.
 * *September 2025 (v0.2.0)*: We have supported vLLM local model for the patient simulation.
 * *September 2025 (v0.1.8)*: Fixed bugs and updated explanation about the simulation.
 * *September 2025 (v0.1.7)*: Fixed typos of the prompts.
@@ -78,11 +77,7 @@ When using Azure OpenAI, be sure to opt out of human review of the data to maint
 > To use Vertex AI, you must complete the following setup steps:
 > 1) Select or create a Google Cloud project in the Google Cloud Console.
 > 2) Enable the Vertex AI API.
-> 3) Create a Service Account:
->    * Navigate to **IAM & Admin > Service Accounts**
->    * Click **Create Service Account**
->    * Assign the role **Vertex AI Platform Express User**
-> 4. Generate a credential key in JSON format and set the path to this JSON file in the `GOOGLE_APPLICATION_CREDENTIALS` environment variable.
+> 3) Generate a Vertex AI Express Mode API key and set its value in the `GENAI_API_KEY` environment variable. 
 
 &nbsp;
 
@@ -113,7 +108,7 @@ GOOGLE_APPLICATION_CREDENTIALS="/path/to/google_credentials.json" # Path to GCP 
 # Patient Agent (GPT)
 from patientsim import PatientAgent
 
-patient_agent = PatientAgent('gpt-4o', 
+patient_agent = PatientAgent('gpt-5', 
                               visit_type='emergency_department',
                               random_seed=42,
                               random_sampling=False,
@@ -159,7 +154,8 @@ print(response)
 ```python
 from patientsim import PatientAgent
 
-patient_agent = PatientAgent('gpt-4o', 
+# Using a default system prompt
+patient_agent = PatientAgent('gpt-5', 
                               visit_type='emergency_department',
                               personality='verbose',
                               recall_level='low',
@@ -168,6 +164,19 @@ patient_agent = PatientAgent('gpt-4o',
                               age='45',
                               tobacco='Denies tobacco use',
                               allergies="Penicillins",
+                              ...
+                            )
+
+# Using a custom system prompt
+# You can pass additional keyword arguments required by your custom system prompt
+patient_agent = PatientAgent('gpt-5', 
+                              visit_type='outpatient',
+                              personality='verbose',
+                              recall_level='low',
+                              confusion_level='moderate',
+                              lang_proficiency_level='B',
+                              system_prompt_path='my_system_prompt.txt',
+                              additional_patient_conditions={"condition_1": "value_1", ...},
                               ...
                             )
 ```
@@ -215,7 +224,7 @@ patient_agent = PatientAgent('gpt-4o',
 ```python
 from patientsim import DoctorAgent
 
-doctor_agent = DoctorAgent('gpt-4o', use_azure=False)
+doctor_agent = DoctorAgent('gpt-5', use_azure=False)
 doctor_agent = DoctorAgent('gemini-2.5-flash', use_vertex=False)
 doctor_agent = DoctorAgent('meta-llama/Llama-3.3-70B-Instruct', use_vllm=True, vllm_endpoint="http://localhost:8000")
 print(doctor_agent.system_prompt)
@@ -232,7 +241,7 @@ print(doctor_agent.system_prompt)
 ```python
 from patientsim import AdminStaffAgent
 
-admin_staff_agent = AdminStaffAgent('gpt-4o', department_list=['gastroenterology', 'cardiology'], use_azure=False)
+admin_staff_agent = AdminStaffAgent('gpt-5', department_list=['gastroenterology', 'cardiology'], use_azure=False)
 admin_staff_agent = AdminStaffAgent('gemini-2.5-flash', department_list=['gastroenterology', 'cardiology'], use_vertex=False)
 admin_staff_agent = AdminStaffAgent('meta-llama/Llama-3.3-70B-Instruct', 
                                     department_list=['gastroenterology', 'cardiology'], 
@@ -249,7 +258,7 @@ Using CheckerAgent is useful for improving safety and consistency in conversatio
 ```python
 from patientsim import CheckerAgent
 
-checker_agent = CheckerAgent('gpt-4o', visit_type='emergency_department', use_azure=False)
+checker_agent = CheckerAgent('gpt-5', visit_type='emergency_department', use_azure=False)
 checker_agent = CheckerAgent('gemini-2.5-flash', visit_type='emergency_department', use_vertex=False)
 checker_agent = CheckerAgent('meta-llama/Llama-3.3-70B-Instruct', visit_type='emergency_department', vllm_endpoint="http://localhost:8000")
 print(checker_agent.prompt_template)
@@ -299,6 +308,40 @@ dialogs = simulation_env.simulate()
 # > ...
 ```
 
+&nbsp;
+
+### Download dataset
+To set up the patient profile, you can use the MIMIC-ED patient profile following our paper, or use your own patient data. \
+Our dataset is available through PhysioNet: [PatientSim Dataset](https://physionet.org/content/persona-patientsim/1.0.0/)
+
+#### Prerequisites
+Before downloading the dataset, you must:
+1. Be a **credentialed user** on PhysioNet
+2. Sign the **Data Use Agreement (DUA)** for our project: https://physionet.org/sign-dua/persona-patientsim/1.0.0/ 
+
+For information on becoming a credentialed user, visit: https://physionet.org/credential-application/
+
+
+#### Quick Setup
+If you are a credentialed user, you can easily set up the dataset using the following code:
+```python
+from patientsim.dataset import DatasetManager
+
+# Option 1: Download only patient_profile.json (recommended for quick start)
+manager = DatasetManager(save_path="./data")
+manager.download(mode="profile")
+
+
+# Option 2: Download entire dataset
+manager = DatasetManager(save_path="./data")
+manager.download(mode="all")
+```
+
+You will be prompted to enter your credentials:
+```
+Physionet Username: your_username
+Physionet Password: ********
+```
 
 
 &nbsp;
@@ -308,14 +351,13 @@ dialogs = simulation_env.simulate()
 
 ## Citation
 ```
-@misc{kyung2025patientsimpersonadrivensimulatorrealistic,
-      title={PatientSim: A Persona-Driven Simulator for Realistic Doctor-Patient Interactions}, 
-      author={Daeun Kyung and Hyunseung Chung and Seongsu Bae and Jiho Kim and Jae Ho Sohn and Taerim Kim and Soo Kyung Kim and Edward Choi},
-      year={2025},
-      eprint={2505.17818},
-      archivePrefix={arXiv},
-      primaryClass={cs.AI},
-      url={https://arxiv.org/abs/2505.17818}, 
+@inproceedings{
+    kyung2025patientsim,
+    title={PatientSim: A Persona-Driven Simulator for Realistic Doctor-Patient Interactions},
+    author={Daeun Kyung and Hyunseung Chung and Seongsu Bae and Jiho Kim and Jae Ho Sohn and Taerim Kim and Soo Kyung Kim and Edward Choi},
+    booktitle={The Thirty-ninth Annual Conference on Neural Information Processing Systems Datasets and Benchmarks Track},
+    year={2025},
+    url={https://openreview.net/forum?id=1THAjdP4QJ}
 }
 ```
 
