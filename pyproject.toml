@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "patientsim"
-version = "0.2.1"
+version = "1.0.0"
 description = "A Python package for simulating patient interactions."
 authors = ["Jun-Min Lee <ljm56897@gmail.com>", "Daeun Kyung <kyungdaeun@kaist.ac.kr>"]
 readme = "README.md"
