@@ -22,10 +22,12 @@ The simulation scenarios also have two visit types:
 &nbsp;
 
 ### Recent updates 📣
-* *February 2026 (v1.0.0)*: Several improvements were made.
+* *February 2026 (v1.0.1)*: Several improvements were made.
   - The patient agent now supports multiple system prompts and conditions for diverse simulation scenarios.
   - MIMIC-based data can now be downloaded.
   - Simulation code for Google Cloud projects has been simplified.
+  - Update citation.
+* *February 2026 (v1.0.0)*: Several improvements were made.
 * *October 2025 (v0.2.1)*: We have unified history format and improved simulation process.
 * *September 2025 (v0.2.0)*: We have supported vLLM local model for the patient simulation.
 * *September 2025 (v0.1.8)*: Fixed bugs and updated explanation about the simulation.
