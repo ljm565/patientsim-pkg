@@ -350,6 +350,7 @@ Physionet Password: ********
 
 
 ## Citation
+#### 1. For emergency department simulation, please cite the following.
 ```
 @inproceedings{
     kyung2025patientsim,
@@ -358,6 +359,19 @@ Physionet Password: ********
     booktitle={The Thirty-ninth Annual Conference on Neural Information Processing Systems Datasets and Benchmarks Track},
     year={2025},
     url={https://openreview.net/forum?id=1THAjdP4QJ}
+}
+```
+
+#### 2. For outpatient simulation, please cite the following.
+```
+@misc{lee2026hadminsimmultiagentsimulatorrealistic,
+      title={H-AdminSim: A Multi-Agent Simulator for Realistic Hospital Administrative Workflows with FHIR Integration}, 
+      author={Jun-Min Lee and Meong Hi Son and Edward Choi},
+      year={2026},
+      eprint={2602.05407},
+      archivePrefix={arXiv},
+      primaryClass={cs.AI},
+      url={https://arxiv.org/abs/2602.05407}, 
 }
 ```
 
