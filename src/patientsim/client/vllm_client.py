@@ -127,6 +127,9 @@ class VLLMClient:
                 **kwargs
             )
             assistant_msg = response.choices[0].message
+            if assistant_msg.content == None:
+                assistant_msg.content = 'Could you tell me again?'
+            assistant_msg.content = assistant_msg.content.strip()
             self.histories.append({"role": assistant_msg.role, "content": [{"type": "text", "text": assistant_msg.content}]})
 
             # Logging token usage
