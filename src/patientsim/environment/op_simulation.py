@@ -17,6 +17,7 @@ class OPSimulation:
                  max_inferences: int = 5):
 
         # Initialize simulation parameters
+        log('Administration simulation will be deprecated in the future. Please use h-adminsim: pip install h-adminsim', color='yellow')
         self.patient_agent = patient_agent
         self.admin_staff_agent = admin_staff_agent
         self.checker_agent = checker_agent
