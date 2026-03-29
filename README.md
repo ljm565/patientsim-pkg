@@ -22,8 +22,8 @@ The simulation scenarios also have two visit types:
 &nbsp;
 
 ### Recent updates 📣
+* *March 2026 (v1.0.4)*: Administration simulation will be deprecated in the future. Please use h-adminsim: `pip install h-adminsim`
 * *March 2026 (v1.0.3)*: Minor improvements.
-  - Refined Gemini API reasoning (thought) token usage statistics.
 * *February 2026 (v1.0.2)*: Several improvements were made.
 * *February 2026 (v1.0.1)*: Update citations.
 * *February 2026 (v1.0.0)*: Added multi-condition patient agent prompts, enabled MIMIC-based data download, and simplified Google Cloud simulation setup.

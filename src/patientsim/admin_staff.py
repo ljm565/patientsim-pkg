@@ -4,8 +4,7 @@ from importlib import resources
 
 from patientsim.registry.persona import *
 from patientsim.utils import colorstr, log
-from patientsim.utils.desc_utils import *
-from patientsim.utils.common_utils import *
+from patientsim.utils.common_utils import set_seed
 from patientsim.client import GeminiClient, GeminiVertexClient, GPTClient, GPTAzureClient, VLLMClient
 
 
@@ -25,6 +24,7 @@ class AdminStaffAgent:
                  **kwargs) -> None:
         
         # Initialize environment
+        log('Administration simulation will be deprecated in the future. Please use h-adminsim: pip install h-adminsim', color='yellow')
         self.departments = ''.join([f'{i+1}. {department}\n' for i, department in enumerate(department_list)])
         self.current_inference = 0  # Current inference index
         self.max_inferences = max_inferences    # Maximum number of inferences allowed
