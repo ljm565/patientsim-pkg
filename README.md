@@ -22,21 +22,24 @@ The simulation scenarios also have two visit types:
 &nbsp;
 
 ### Recent updates 📣
-* *March 2026 (v1.0.4)*: Administration simulation will be deprecated in the future. Please use h-adminsim: `pip install h-adminsim`
-* *March 2026 (v1.0.3)*: Minor improvements.
-* *February 2026 (v1.0.2)*: Several improvements were made.
-* *February 2026 (v1.0.1)*: Update citations.
-* *February 2026 (v1.0.0)*: Added multi-condition patient agent prompts, enabled MIMIC-based data download, and simplified Google Cloud simulation setup.
-* *October 2025 (v0.2.1)*: We have unified history format and improved simulation process.
-* *September 2025 (v0.2.0)*: We have supported vLLM local model for the patient simulation.
-* *September 2025 (v0.1.8)*: Fixed bugs and updated explanation about the simulation.
-* *September 2025 (v0.1.7)*: Fixed typos of the prompts.
-* *September 2025 (v0.1.6)*: Updated dependencies.
-* *August 2025 (v0.1.5)*: Improved the outpatient simulation to be more realistic based on expert feedback.
-* *August 2025 (v0.1.4)*: Added support for outpatient simulation and added exception handling for None-type responses from Gemini.
-* *August 2025 (v0.1.3)*: Added support for emergency department simulation, Azure for GPT, and Vertex AI for the Gemini API.
-* *August 2025 (v0.1.1)*: Added support for a doctor persona in the LLM agent for the emergency department.
-* *August 2025 (v0.1.0)*: Initial release: Introduced a dedicated LLM agent for patients that allows customization of patient personas.
+* *v1.1.0 (April 2026)*: The hospital administration simulation has been separated into `h-adminsim`.
+    * The hospital administration environment and staff agents are no longer supported in `patientsim` and have been moved to [`h-adminsim`](https://pypi.org/project/h-adminsim/) (pip install h-adminsim).
+    * Since `h-adminsim` uses the outpatient personas from patientsim, the patient agent for outpatient simulation is still maintained.
+* *v1.0.4 (March 2026)*: Administration simulation will be deprecated in the future. Please use h-adminsim: `pip install h-adminsim`
+* *v1.0.3 (March 2026)*: Minor improvements.
+* *v1.0.2 (February 2026)*: Several improvements were made.
+* *v1.0.1 (February 2026)*: Update citations.
+* *v1.0.0 (February 2026)*: Added multi-condition patient agent prompts, enabled MIMIC-based data download, and simplified Google Cloud simulation setup.
+* *v0.2.1 (October 2025)*: We have unified history format and improved simulation process.
+* *v0.2.0 (September 2025)*: We have supported vLLM local model for the patient simulation.
+* *v0.1.8 (September 2025)*: Fixed bugs and updated explanation about the simulation.
+* *v0.1.7 (September 2025)*: Fixed typos of the prompts.
+* *v0.1.6 (September 2025)*: Updated dependencies.
+* *v0.1.5 (August 2025)*: Improved the outpatient simulation to be more realistic based on expert feedback.
+* *v0.1.4 (August 2025)*: Added support for outpatient simulation and added exception handling for None-type responses from Gemini.
+* *v0.1.3 (August 2025)*: Added support for emergency department simulation, Azure for GPT, and Vertex AI for the Gemini API.
+* *v0.1.1 (August 2025)*: Added support for a doctor persona in the LLM agent for the emergency department.
+* *v0.1.0 (August 2025)*: Initial release: Introduced a dedicated LLM agent for patients that allows customization of patient personas.
 
 &nbsp;
 
@@ -238,20 +241,6 @@ print(doctor_agent.system_prompt)
 
 &nbsp;
 
-#### Administraion Office Agent
-```python
-from patientsim import AdminStaffAgent
-
-admin_staff_agent = AdminStaffAgent('gpt-5', department_list=['gastroenterology', 'cardiology'], use_azure=False)
-admin_staff_agent = AdminStaffAgent('gemini-2.5-flash', department_list=['gastroenterology', 'cardiology'], use_vertex=False)
-admin_staff_agent = AdminStaffAgent('meta-llama/Llama-3.3-70B-Instruct', 
-                                    department_list=['gastroenterology', 'cardiology'], 
-                                    use_vllm=True, 
-                                    vllm_endpoint="http://localhost:8000"
-                                  )
-print(admin_staff_agent.system_prompt)
-```
-&nbsp;
 
 #### Dialog Termination Checker Agent
 The CheckerAgent is used to double-check if the dialog should be terminated, especially in edge cases where rule-based logic might fail. \
@@ -268,7 +257,7 @@ print(checker_agent.prompt_template)
 
 ### Run Simulation
 ```python
-from patientsim.environment import OPSimulation, EDSimulation
+from patientsim.environment import EDSimulation
 
 # Emergency department
 simulation_env = EDSimulation(patient_agent, doctor_agent)
@@ -283,21 +272,6 @@ dialogs = simulation_env.simulate()
 
 # Emergency department with checker agent
 simulation_env = EDSimulation(patient_agent, doctor_agent, checker_agent)
-dialogs = simulation_env.simulate()
-
-# Outpatient
-simulation_env = OPSimulation(patient_agent, admin_staff_agent)
-dialogs = simulation_env.simulate()
-
-# Outpatient with additional kwargs
-# NOTE: You can also set other generation parameters beyond temperature and seed
-patient_kwargs = {"reasoning_effort": "low"}
-staff_kwargs = {"reasoning_effort": "medium"}    
-simulation_env = OPSimulation(patient_agent, admin_staff_agent, patient_kwargs, staff_kwargs)
-dialogs = simulation_env.simulate()
-
-# Outpatient with checker agent
-simulation_env = OPSimulation(patient_agent, admin_staff_agent, checker_agent)
 dialogs = simulation_env.simulate()
 
 # Example response:
