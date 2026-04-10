@@ -1,10 +1,11 @@
 # PatientSim-pkg
 
 ---
-![PyPI - Python Version](https://img.shields.io/pypi/pyversions/patientsim)
-![PyPI Version](https://img.shields.io/pypi/v/patientsim)
-![Downloads](https://img.shields.io/pypi/dm/patientsim)
-![DOI](https://img.shields.io/badge/DOI-10.48550/arXiv.2505.17818-blue)
+[![DOI](https://img.shields.io/badge/DOI-10.48550/arXiv.2505.17818-red)](https://arxiv.org/abs/2505.17818)
+[![DOI](https://img.shields.io/badge/DOI-10.48550/arXiv.2602.05407-red)](https://arxiv.org/abs/2602.05407)
+[![PyPI Version](https://img.shields.io/pypi/v/patientsim)](https://pypi.org/project/patientsim/)
+[![Downloads](https://img.shields.io/pypi/dm/patientsim)](https://pypi.org/project/patientsim/)
+
 ---
 
 An official Python package for simulating patient interactions, called `PatientSim`.
@@ -25,6 +26,7 @@ The simulation scenarios also have two visit types:
 * *v1.1.0 (April 2026)*: The hospital administration simulation has been separated into `h-adminsim`.
     * The hospital administration environment and staff agents are no longer supported in `patientsim` and have been moved to [`h-adminsim`](https://pypi.org/project/h-adminsim/) (pip install h-adminsim).
     * Since `h-adminsim` uses the outpatient personas from patientsim, the patient agent for outpatient simulation is still maintained.
+* *March 2026 (v1.0.5)*: Update license.
 * *v1.0.4 (March 2026)*: Administration simulation will be deprecated in the future. Please use h-adminsim: `pip install h-adminsim`
 * *v1.0.3 (March 2026)*: Minor improvements.
 * *v1.0.2 (February 2026)*: Several improvements were made.
