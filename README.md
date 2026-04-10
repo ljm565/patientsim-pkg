@@ -1,10 +1,11 @@
 # PatientSim-pkg
 
 ---
-![PyPI - Python Version](https://img.shields.io/pypi/pyversions/patientsim)
-![PyPI Version](https://img.shields.io/pypi/v/patientsim)
-![Downloads](https://img.shields.io/pypi/dm/patientsim)
-![DOI](https://img.shields.io/badge/DOI-10.48550/arXiv.2505.17818-blue)
+[![DOI](https://img.shields.io/badge/DOI-10.48550/arXiv.2505.17818-red)](https://arxiv.org/abs/2505.17818)
+[![DOI](https://img.shields.io/badge/DOI-10.48550/arXiv.2602.05407-red)](https://arxiv.org/abs/2602.05407)
+[![PyPI Version](https://img.shields.io/pypi/v/patientsim)](https://pypi.org/project/patientsim/)
+[![Downloads](https://img.shields.io/pypi/dm/patientsim)](https://pypi.org/project/patientsim/)
+
 ---
 
 An official Python package for simulating patient interactions, called `PatientSim`.
@@ -22,6 +23,7 @@ The simulation scenarios also have two visit types:
 &nbsp;
 
 ### Recent updates 📣
+* *March 2026 (v1.0.5)*: Update license.
 * *March 2026 (v1.0.4)*: Administration simulation will be deprecated in the future. Please use h-adminsim: `pip install h-adminsim`
 * *March 2026 (v1.0.3)*: Minor improvements.
 * *February 2026 (v1.0.2)*: Several improvements were made.
