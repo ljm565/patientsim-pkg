@@ -341,14 +341,15 @@ Physionet Password: ********
 
 #### 2. For outpatient simulation, please cite the following.
 ```
-@misc{lee2026hadminsimmultiagentsimulatorrealistic,
-      title={H-AdminSim: A Multi-Agent Simulator for Realistic Hospital Administrative Workflows with FHIR Integration}, 
-      author={Jun-Min Lee and Meong Hi Son and Edward Choi},
-      year={2026},
-      eprint={2602.05407},
-      archivePrefix={arXiv},
-      primaryClass={cs.AI},
-      url={https://arxiv.org/abs/2602.05407}, 
+@inproceedings{lee2026hadminsimmultiagentsimulatorrealistic,
+  title         = {H-AdminSim: A Multi-Agent Simulator for Realistic Hospital Administrative Workflows with FHIR Integration}, 
+  author        = {Jun-Min Lee and Meong Hi Son and Edward Choi},
+  booktitle     = {Proceedings of the Conference on Health, Inference, and Learning (CHIL)},
+  year          = {2026},
+  eprint        = {2602.05407},
+  archivePrefix = {arXiv},
+  primaryClass  = {cs.AI},
+  url           = {https://arxiv.org/abs/2602.05407}, 
 }
 ```
 
