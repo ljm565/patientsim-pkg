@@ -1,9 +1,11 @@
 import shutil
 import getpass
-import requests
 import subprocess
 from pathlib import Path
 from typing import Optional, Literal
+
+from patientsim.utils import log
+
 
 
 class DatasetManager:
@@ -50,8 +52,8 @@ class DatasetManager:
         temp_dir = self.save_path / "temp_download"
         temp_dir.mkdir(parents=True, exist_ok=True)
 
-        print(f"Downloading entire dataset from {url}...")
-        print(f"This may take a while...")
+        log(f"Downloading entire dataset from {url}...")
+        log(f"This may take a while...")
 
         try:
             # Download using wget
@@ -70,23 +72,23 @@ class DatasetManager:
 
             result = subprocess.run(cmd, check=True, capture_output=True, text=True)
 
-            print("Download completed successfully!")
+            log("Download completed successfully!")
 
             # Move files from nested directory to target path
             self._move_files(temp_dir, dataset_version)
 
         except subprocess.CalledProcessError as e:
-            print(f"Error during download: {e}")
-            print(f"stderr: {e.stderr}")
+            log(f"Error during download: {e}", level='error')
+            log(f"stderr: {e.stderr}", level='error')
             raise
         except Exception as e:
-            print(f"Unexpected error: {e}")
+            log(f"Unexpected error: {e}", level='error')
             raise
         finally:
             # Clean up temporary directory
             if temp_dir.exists():
                 shutil.rmtree(temp_dir)
-                print("Cleaned up temporary files.")
+                log("Cleaned up temporary files.", level='error')
 
 
     def _download_profile(self, username: str, password: str, dataset_version: str) -> None:
@@ -94,7 +96,7 @@ class DatasetManager:
         file_url = f"https://physionet.org/files/persona-patientsim/{dataset_version}/patient_profile.json"
         file_path = self.save_path / "patient_profile.json"
 
-        print(f"Downloading patient_profile.json from {file_url}...")
+        log(f"Downloading patient_profile.json from {file_url}...")
 
         try:
             cmd = [
@@ -112,20 +114,20 @@ class DatasetManager:
                 text=True
             )
             
-            print(f"Successfully downloaded patient_profile.json to {file_path}")
+            log(f"Successfully downloaded patient_profile.json to {file_path}")
             
         except subprocess.CalledProcessError as e:
-            print(f"Error during download: {e}")
-            print(f"stderr: {e.stderr}")
+            log(f"Error during download: {e}", level='error')
+            log(f"stderr: {e.stderr}", level='error')
             if "403" in e.stderr or "401" in e.stderr:
-                print("\nAuthentication failed. Please check your credentials.")
-                print("Make sure you have access to this dataset on Physionet.")
+                log("\nAuthentication failed. Please check your credentials.", level='error')
+                log("Make sure you have access to this dataset on Physionet.", level='error')
             raise
         except FileNotFoundError:
-            print("wget is not installed. Please install wget or use mode='all' with full download.")
+            log("wget is not installed. Please install wget or use mode='all' with full download.", level='error')
             raise
         except Exception as e:
-            print(f"Unexpected error: {e}")
+            log(f"Unexpected error: {e}", level='error')
             raise
         
 
@@ -143,7 +145,7 @@ class DatasetManager:
         if not source_path.exists():
             raise FileNotFoundError(f"Downloaded files not found at {source_path}")
 
-        print(f"Moving files from {source_path} to {self.save_path}...")
+        log(f"Moving files from {source_path} to {self.save_path}...")
 
         # Move all files and subdirectories
         for item in source_path.iterdir():
@@ -155,4 +157,4 @@ class DatasetManager:
                     dest.unlink()
             shutil.move(str(item), str(dest))
 
-        print(f"Files successfully moved to {self.save_path}")
+        log(f"Files successfully moved to {self.save_path}")
